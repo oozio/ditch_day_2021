@@ -27,6 +27,8 @@ jobs:
         source_dir: 'commands'
         destination_dir: ''
   publish:
+    needs: build
+    if: needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
     - name: Publish commands
