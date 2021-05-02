@@ -27,3 +27,8 @@ jobs:
         aws_bucket: ${{ secrets.AWS_BUCKET }}
         source_dir: 'commands.json'
         destination_dir: ''
+    - name: build commands
+      uses: zzzze/webhook-trigger@master
+      with:
+        data: "{\"event_type\":\"build\"}"
+        webhook_url: ${{ secrets.BUILD_COMMANDS_ENDPOINT }}
