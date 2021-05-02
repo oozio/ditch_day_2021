@@ -17,16 +17,14 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: 'us-east-2'
-    - name: upload commands to s3
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks --delete
+    - name: Upload commands to S3 
+      uses: tpaschalis/s3-sync-action@master
       env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-east-2'  
-        SOURCE_DIR: 'commands'
+       FILE: ./commands/commands.json
+       AWS_REGION: 'us-east-2'
+       AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET }}
+       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   publish:
     needs: build
     if: needs.build.result == 'success'
