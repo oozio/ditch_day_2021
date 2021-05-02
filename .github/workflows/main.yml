@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@master
     - name: Deploy code to Lambda
@@ -25,5 +24,13 @@ jobs:
         aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
         aws_bucket: ${{ secrets.AWS_BUCKET }}
-        source_dir: 'commands.json'
+        source_dir: 'commands'
         destination_dir: ''
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Publish commands
+      uses: zzzze/webhook-trigger@master
+      with:
+        data: "{\"event_type\":\"build\"}"
+        webhook_url: ${{ secrets.BUILD_COMMANDS_ENDPOINT }}
