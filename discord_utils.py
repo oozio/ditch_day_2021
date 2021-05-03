@@ -51,7 +51,7 @@ def check_input(event):
     _verify_signature(event)
     body = event.get('body-json')
     if _ping_pong(body):
-        return format_response("PONG")
+        return format_response("PONG", None)
     
 def format_response(response_type, content, tts=False):
     response = {
