@@ -52,6 +52,12 @@ def check_input(event):
     body = event.get('body-json')
     if _ping_pong(body):
         return format_response("PONG", None)
+
+def get_input(data, target):
+    for option in data['options']:
+        if option['name'] == target:
+            return option['value']
+
     
 def format_response(response_type, content, tts=False):
     response = {
