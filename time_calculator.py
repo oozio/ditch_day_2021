@@ -80,19 +80,20 @@ _TIME_EXPRESSION_PATTERN = re.compile(r'(?P<time>[^+-]*)(?P<operation>[+-])(?P<r
 _NEGATIVE_TIME_EXPRESSION_PATTERN = re.compile(r'\s*-(?P<remaining>.*)')
 
 def evaluate(expression):
+  original_expression = expression
   total = Time.parse(0)
-  to_print = []
+  evaluated_expression = []
   prev_add = True
   m = _NEGATIVE_TIME_EXPRESSION_PATTERN.match(expression)
   if m:
     expression = m.group('remaining')
     prev_add = False
-    to_print = ['-']
+    evaluated_expression = ['-']
 
   m = _TIME_EXPRESSION_PATTERN.match(expression)
   while m:
     t = Time.parse(m.group('time'))
-    to_print.append(str(t))
+    evaluated_expression.append(str(t))
     if prev_add:
       total += t
     else:
@@ -100,7 +101,7 @@ def evaluate(expression):
 
     operation = m.group('operation')
     prev_add = operation == '+'
-    to_print.append(operation)
+    evaluated_expression.append(operation)
 
     expression = m.group('remaining')
     m = _TIME_EXPRESSION_PATTERN.match(expression)
@@ -111,7 +112,7 @@ def evaluate(expression):
     total += t
   else:
     total -= t
-  to_print.append(str(t))
+  evaluated_expression.append(str(t))
 
-  print(' '.join(to_print))
-  return str(total)
+  formatted_evaluated_expression = ' '.join(evaluated_expression)
+  return f'Input: "{original_expression}"\nCalculated: "{formatted_evaluated_expression}"\n**{str(total)}**'
