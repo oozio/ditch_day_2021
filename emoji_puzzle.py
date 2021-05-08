@@ -105,7 +105,7 @@ class Level(object):
   def __hash__(self):
     return hash((self.sequence, self.level_num))
 
-LEVEL_CODES = ('ssss', 'ssasa', 'asksk', 'kske', 'ceacse', 'kcrrsr', 'cracker')
+LEVEL_CODES = ('ssss', 'ssasa', 'asksk', 'kske', 'ceascec', 'kcrrsr', 'cracker')
 ALL_LEVELS = frozenset([
     Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, 7)
 ])
