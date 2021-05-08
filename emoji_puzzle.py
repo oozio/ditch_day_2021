@@ -106,7 +106,7 @@ class Level(object):
     return hash((self.sequence, self.level_num))
 
 def _getFoodsInLevel(level):
-  return ''.join(str(ALL_FOODS[i]) for i in range(max(level.level_num + 1, 6)))
+  return ''.join(str(ALL_FOODS[i]) for i in range(min(level.level_num + 1, 6)))
 
 LEVEL_CODES = ('ssss', 'ssasa', 'asksk', 'kske', 'ceacse', 'kcrrsr', 'cracker')
 ALL_LEVELS = frozenset([
