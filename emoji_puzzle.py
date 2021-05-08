@@ -82,7 +82,7 @@ SALT = Food(
     Mutation.NONE,
     Mutation.NONE)
 
-ALL_FOODS = frozenset([AVOCADO, CHEESE, EGG, KIWI, RICE, SALT])
+ALL_FOODS = (SALT, AVOCADO, KIWI, EGG, CHEESE, RICE)
 GET_FOOD = {
     food.__getattribute__(attr): food
     for food in ALL_FOODS
@@ -194,30 +194,25 @@ def _getMessage(level, guess):
   if level.sequence != guess:
     return 'NO! WRONG!'
   next_level = GET_LEVEL[guess]
-  next_level_foods = ''.join(sorted([str(f) for f in set(next_level.sequence)]))
+  next_level_foods = ''.join(str(ALL_FOODS[i]) for i in range(max(next_level.level_num + 1, 6)))
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
-         f'*Foods in the next level: {next_level_foods}*')
+         f'*Types of foods in the next level: {next_level_foods}*')
 
 def evaluateInput(level_code, guess):
   processed_level_code = _processSequence(level_code)
   level = GET_LEVEL.get(processed_level_code, None)
   if not level:
-    return (f'Input (level): {level_code}\n' + 
-            f'Level: {"".join(str(f) for f in processed_level_code)}\n' +
+    return (f'Input (level): {level_code}\n' +
              'Invalid level code')
   processed_guess = _processSequence(guess)
   if len(level.sequence) != len(processed_guess):
-    return (f'Input (level): {level_code}\n' + 
-            f'Input (guess): {guess}\n' +
-            f'Level: {"".join(str(f) for f in processed_level_code)}\n' +
-            f'Guess: {"".join(str(f) for f in processed_guess)}\n'
+    return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
+            f'Guess: {guess} - {"".join(str(f) for f in processed_guess)}\n' +
             f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
-  return (f'Input (level): {level_code}\n' + 
-          f'Input (guess): {guess}\n' +
-          f'Level: {"".join(str(f) for f in processed_level_code)}\n' + 
-          f'Guess: {"".join(str(f) for f in processed_guess)}\n'
+  return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
+          f'Guess: {guess} - {"".join(str(f) for f in processed_guess)}\n' +
           f'{"".join(p.value for p in pegs)}\n'
           f'{message}')
