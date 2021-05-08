@@ -105,6 +105,9 @@ class Level(object):
   def __hash__(self):
     return hash((self.sequence, self.level_num))
 
+def _getFoodsInLevel(level):
+  return ''.join(str(ALL_FOODS[i]) for i in range(max(level.level_num + 1, 6)))
+
 LEVEL_CODES = ('ssss', 'ssasa', 'asksk', 'kske', 'ceacse', 'kcrrsr', 'cracker')
 ALL_LEVELS = frozenset([
     Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, 7)
@@ -194,7 +197,7 @@ def _getMessage(level, guess):
   if level.sequence != guess:
     return 'NO! WRONG!'
   next_level = GET_LEVEL[guess]
-  next_level_foods = ''.join(str(ALL_FOODS[i]) for i in range(max(next_level.level_num + 1, 6)))
+  next_level_foods = _getFoodsInLevel(next_level)
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
@@ -208,11 +211,11 @@ def evaluateInput(level_code, guess):
   processed_guess = _processSequence(guess)
   if len(level.sequence) != len(processed_guess):
     return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
-            f'Guess: {guess} - {"".join(str(f) for f in processed_guess)}\n' +
+            f'Guess ({_getFoodsInLevel(level)}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
             f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
   return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
-          f'Guess: {guess} - {"".join(str(f) for f in processed_guess)}\n' +
+          f'Guess ({_getFoodsInLevel(level)}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
           f'{"".join(p.value for p in pegs)}\n'
           f'{message}')
