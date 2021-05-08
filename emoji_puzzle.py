@@ -191,9 +191,13 @@ def _getPegs(level, guess):
   return [p for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING] for _ in range(peg_counts[p])]
 
 def _getMessage(level, guess):
-  if level.sequence == guess:
-    return 'Congrats! that\'s right!'
-  return 'NO! WRONG!'
+  if level.sequence != guess:
+    return 'NO! WRONG!'
+  next_level = GET_LEVEL[guess]
+  next_level_foods = ''.join(sorted([str(f) for f in set(next_level.sequence)]))
+  return ('**Congrats! that\'s right!**\n' +
+         f'*The next level will have {len(next_level.sequence)} foods.*\n' +
+         f'*Foods in the next level: {next_level_foods}*')
 
 def evaluateInput(level_code, guess):
   processed_level_code = _processSequence(level_code)
@@ -216,4 +220,4 @@ def evaluateInput(level_code, guess):
           f'Level: {"".join(str(f) for f in processed_level_code)}\n' + 
           f'Guess: {"".join(str(f) for f in processed_guess)}\n'
           f'{"".join(p.value for p in pegs)}\n'
-          f'**{message}**')
+          f'{message}')
