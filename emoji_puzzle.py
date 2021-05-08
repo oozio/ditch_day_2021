@@ -196,7 +196,9 @@ def _getPegs(level, guess):
 def _getMessage(level, guess):
   if level.sequence != guess:
     return 'NO! WRONG!'
-  next_level = GET_LEVEL[guess]
+  next_level = GET_LEVEL.get(guess, None)
+  if not next_level:
+    return '**Congrats! that\'s right!**'
   next_level_foods = _getFoodsInLevel(next_level)
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
