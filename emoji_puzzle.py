@@ -35,7 +35,7 @@ class Food(object):
     raise AttributeError('could not set value')
 
   def __eq__(self, other):
-    if self == None or other == None:
+    if other == None:
       return False
     return all(
         self.__getattribute__(attr) == other.__getattribute__(attr)
@@ -89,9 +89,6 @@ GET_FOOD = {
     for attr in ['emoji', 'character']
 }
 
-_SINGLE_FOOD_STRING_REGEX = '({})'.format('|'.join([key.lower() for key in GET_FOOD.keys()]))
-FIRST_FOOD_PATTERN = re.compile(rf'(?P<head>{_SINGLE_FOOD_STRING_REGEX})\s*(?P<tail>.*)')
-
 class Level(object):
   def __init__(self, level_num, sequence, access_code):
     super(Level, self).__setattr__('level_num', level_num)
@@ -118,14 +115,17 @@ GET_LEVEL = {
     for attr in ['access_code']
 }
 
+_SINGLE_FOOD_STRING_REGEX = '({})'.format('|'.join([key.lower() for key in GET_FOOD.keys()]))
+_FIRST_FOOD_PATTERN = re.compile(rf'(?P<head>{_SINGLE_FOOD_STRING_REGEX})\s*(?P<tail>.*)')
+
 def _processSequence(sequence):
   foods = []
   remaining = sequence.strip().lower()
-  m = FIRST_FOOD_PATTERN.match(remaining)
+  m = _FIRST_FOOD_PATTERN.match(remaining)
   while m:
     foods.append(GET_FOOD[m.group('head')])
     remaining = m.group('tail')
-    m = FIRST_FOOD_PATTERN.match(remaining)
+    m = _FIRST_FOOD_PATTERN.match(remaining)
   return tuple(foods)
 
 def _processMutation(valid, reverse, index, mutation, food_counts, f):
@@ -147,7 +147,7 @@ def _getPegs(level, guess):
   valid = [[f] for f in guess]
   food_counts = {f:0 for f in ALL_FOODS}
   reverse = [False] * n
-  for i, f in guess:
+  for i, f in enumerate(guess):
     if valid[i][0] != f:
       # base has been modified. do not process mutations
       continue
@@ -156,9 +156,39 @@ def _getPegs(level, guess):
     _processMutation(valid, reverse, (i + 1) % n, f.mutate_right, food_counts, f)
     food_counts[f] += 1
 
-  for i, foods in valid:
-    # TODO
-    pass
+  sequence_food_counts = {f:0 for f in ALL_FOODS}
+  valid_food_counts = {(f, r):0 for f in ALL_FOODS for r in [True, False]}
+  correct_first_food_counts = {(f, r):0 for f in ALL_FOODS for r in [True, False]}
+  correct_other_food_counts = {f:0 for f in ALL_FOODS}
+  for i, f in enumerate(level.sequence):
+    sequence_food_counts[f] += 1
+
+    for j, f2 in enumerate(valid[i]):
+      if f2 is None:
+       continue
+      valid_food_counts[f2, reverse[i]] += 1
+      if f2 == f:
+        if j == 0:
+          correct_first_food_counts[f, reverse[i]] += 1
+        else:
+          correct_other_food_counts[f] += 1
+
+  peg_counts = {p:0 for p in Peg}
+  for f in ALL_FOODS:
+    solution = sequence_food_counts[f]
+    guess = valid_food_counts[f, False]
+    guess_inverted = valid_food_counts[f, True]
+    right_position_inverted = correct_first_food_counts[f, True]
+    right_position = correct_first_food_counts[f, False] +  correct_other_food_counts[f]
+
+    peg_counts[Peg.CORRECT] += right_position + max(guess_inverted - solution, 0)
+    if solution > right_position:
+      peg_counts[Peg.MISPLACED] += min(solution, guess + guess_inverted)
+      peg_counts[Peg.MISPLACED] -= right_position + right_position_inverted
+
+    peg_counts[Peg.MISSING] += max(guess - solution, 0) + right_position_inverted
+
+  return [p for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING] for _ in range(peg_counts[p])]
 
 def _getMessage(level, guess):
   if level.sequence == guess:
@@ -179,7 +209,7 @@ def evaluateInput(level_code, guess):
             f'Level: {"".join(str(f) for f in processed_level_code)}\n' +
             f'Guess: {"".join(str(f) for f in processed_guess)}\n'
             f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
-  pegs = _getPegs(level, guess)
+  pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, guess)
   return (f'Input (level): {level_code}\n' + 
           f'Input (guess): {guess}\n' +
