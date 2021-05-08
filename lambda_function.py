@@ -29,7 +29,7 @@ def lambda_handler(event, context):
         level_code = discord_utils.get_input(data, "level_code")
         guess = discord_utils.get_input(data, "guess")
         output = emoji_puzzle.evaluateInput(level_code, guess)
-        return discord_utils.format_response('MESSAGE_WITH_SOURCE', content)
+        return discord_utils.format_response('MESSAGE_WITH_SOURCE', output)
 
     return discord_utils.format_response('MESSAGE_WITH_SOURCE', "didn't recognize command!! run away!!!")
     
