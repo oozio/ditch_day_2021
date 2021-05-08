@@ -4,6 +4,7 @@ import requests
 
 import discord_utils
 import time_calculator
+import emoji_puzzle
 
 
 def lambda_handler(event, context):
@@ -23,6 +24,12 @@ def lambda_handler(event, context):
         input = discord_utils.get_input(data, "time_string")
         content = time_calculator.evaluate(input)
         return discord_utils.format_response('MESSAGE_WITH_SOURCE', content)
+        
+    if command == "hare-puzzle":
+        level_code = discord_utils.get_input(data, "level_code")
+        guess = discord_utils.get_input(data, "guess")
+        output = emoji_puzzle.evaluateInput(level_code, guess)
+        return discord_utils.format('MESSAGE_WITH_SOURCE', content)
 
     return discord_utils.format_response('MESSAGE_WITH_SOURCE', "didn't recognize command!! run away!!!")
     

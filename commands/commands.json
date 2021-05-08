@@ -42,5 +42,22 @@
                 "required": 0
             }
         ]
-    }
+    },
+    {
+        "name": "hare-puzzle",
+        "description": "Put in a guess for the March Hare's puzzle",
+        "options": [
+            {
+                "name": "level_code",
+                "description": "The code for a specific level of the puzzle",
+                "type": 3,
+                "required": 1
+            },
+            {
+                "name": "guess",
+                "description": "e.g. 'SSSS' or ':salt: :salt: :salt: :salt:'",
+                "type": 3,
+                "required": 1
+            }
+        ]
 ]
