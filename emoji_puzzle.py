@@ -194,7 +194,7 @@ def _getPegs(level, guess):
   
   peg_counts[Peg.MISSING] = len(level.sequence) - peg_counts[Peg.CORRECT] - peg_counts[Peg.MISPLACED]
 
-  return [p for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING] for _ in range(peg_counts[p])]
+  return peg_counts
 
 def _getMessage(level, guess):
   if level.sequence != guess:
@@ -204,6 +204,7 @@ def _getMessage(level, guess):
     return '**Congrats! that\'s right!**'
   next_level_foods = ''.join(str(f) for f in _getFoodsInLevel(next_level))
   return ('**Congrats! that\'s right!**\n' +
+         f'*Use this as the next level code.*' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
 
@@ -213,14 +214,19 @@ def evaluateInput(level_code, guess):
   if not level:
     return (f'Input (level): {level_code}\n' +
              'Invalid level code')
+  if len(level.sequence) != len(guess):
+    return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+            f'Guess: {guess}\n' +
+            f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
   processed_guess = _processSequence(guess, level)
   if len(level.sequence) != len(processed_guess):
-    return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
-            f'Guess ({"".join(str(f) for f in _getFoodsInLevel(level))}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
-            f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
+    return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+            f'Guess: {guess}\n' +
+            f'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
-  return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
-          f'Guess ({"".join(str(f) for f in _getFoodsInLevel(level))}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
-          f'{"".join(p.value for p in pegs)}\n'
+  return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+          f'Guess: {guess}\n' +
+          f'{"".join(str(f) for f in processed_guess)}\n' +
+          f'{"   ".join(pegs[p]p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING])}\n'
           f'{message}')
