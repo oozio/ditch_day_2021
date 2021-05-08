@@ -185,8 +185,8 @@ def _getPegs(level, guess):
     if solution > right_position:
       peg_counts[Peg.MISPLACED] += min(solution, guess + guess_inverted)
       peg_counts[Peg.MISPLACED] -= right_position + right_position_inverted
-
-    peg_counts[Peg.MISSING] += max(guess - solution, 0) + right_position_inverted
+  
+  peg_counts[Peg.MISSING] = len(level.sequence) - peg_counts[Peg.CORRECT] - peg_counts[Peg.MISPLACED]
 
   return [p for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING] for _ in range(peg_counts[p])]
 
@@ -210,7 +210,7 @@ def evaluateInput(level_code, guess):
             f'Guess: {"".join(str(f) for f in processed_guess)}\n'
             f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
   pegs = _getPegs(level, processed_guess)
-  message = _getMessage(level, guess)
+  message = _getMessage(level, processed_guess)
   return (f'Input (level): {level_code}\n' + 
           f'Input (guess): {guess}\n' +
           f'Level: {"".join(str(f) for f in processed_level_code)}\n' + 
