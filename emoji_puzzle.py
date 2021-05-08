@@ -105,9 +105,6 @@ class Level(object):
   def __hash__(self):
     return hash((self.sequence, self.level_num))
 
-def _getFoodsInLevel(level):
-  return ''.join(str(ALL_FOODS[i]) for i in range(min(level.level_num + 1, 6)))
-
 LEVEL_CODES = ('ssss', 'ssasa', 'asksk', 'kske', 'ceacse', 'kcrrsr', 'cracker')
 ALL_LEVELS = frozenset([
     Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, 7)
@@ -118,17 +115,23 @@ GET_LEVEL = {
     for attr in ['access_code']
 }
 
-_SINGLE_FOOD_STRING_REGEX = '({})'.format('|'.join([key.lower() for key in GET_FOOD.keys()]))
-_FIRST_FOOD_PATTERN = re.compile(rf'(?P<head>{_SINGLE_FOOD_STRING_REGEX})\s*(?P<tail>.*)')
+def _getFoodsInLevel(level=None):
+  if level == None:
+    return ALL_FOODS
+  return ALL_FOODS[:min(level.level_num + 1, 6)]
 
-def _processSequence(sequence):
+def _getSingleFoodStringRegex(level=None):
+   foods_string = '[{}]'.format(''.join([f.character for f in _getFoodsInLevel(level)]))
+   return rf'(?P<head>{foods_string})\s*(?P<tail>.*)'
+
+def _processSequence(sequence, level=None):
   foods = []
   remaining = sequence.strip().lower()
-  m = _FIRST_FOOD_PATTERN.match(remaining)
+  m = re.match(_getSingleFoodStringRegex(level), remaining)
   while m:
     foods.append(GET_FOOD[m.group('head')])
     remaining = m.group('tail')
-    m = _FIRST_FOOD_PATTERN.match(remaining)
+    m = re.match(_getSingleFoodStringRegex(level), remaining)
   return tuple(foods)
 
 def _processMutation(valid, reverse, index, mutation, food_counts, f):
@@ -199,7 +202,7 @@ def _getMessage(level, guess):
   next_level = GET_LEVEL.get(guess, None)
   if not next_level:
     return '**Congrats! that\'s right!**'
-  next_level_foods = _getFoodsInLevel(next_level)
+  next_level_foods = ''.join(str(f) for f in _getFoodsInLevel(next_level))
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
@@ -210,14 +213,14 @@ def evaluateInput(level_code, guess):
   if not level:
     return (f'Input (level): {level_code}\n' +
              'Invalid level code')
-  processed_guess = _processSequence(guess)
+  processed_guess = _processSequence(guess, level)
   if len(level.sequence) != len(processed_guess):
     return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
-            f'Guess ({_getFoodsInLevel(level)}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
+            f'Guess ({"".join(str(f) for f in _getFoodsInLevel(level))}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
             f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
   return (f'Level {level.level_num}: {level_code} - {"".join(str(f) for f in processed_level_code)}\n' + 
-          f'Guess ({_getFoodsInLevel(level)}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
+          f'Guess ({"".join(str(f) for f in _getFoodsInLevel(level))}): {guess} - {"".join(str(f) for f in processed_guess)}\n' +
           f'{"".join(p.value for p in pegs)}\n'
           f'{message}')
