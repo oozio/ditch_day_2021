@@ -228,5 +228,5 @@ def evaluateInput(level_code, guess):
   return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
           f'Guess: {guess}\n' +
           f'{"".join(str(f) for f in processed_guess)}\n' +
-          f'{"   ".join(pegs[p]p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING])}\n'
+          f'{"   ".join(pegs[p]p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING])}\n' +
           f'{message}')
