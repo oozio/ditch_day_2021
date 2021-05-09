@@ -73,16 +73,10 @@ RICE = Food(
     ':rice:',
     'r',
     Mutation.NONE,
-    lambda i: Mutation.DISAPPEAR if i == 0 else Mutation.NONE,
-    Mutation.NONE)
-SALT = Food(
-    ':salt:',
-    's',
-    Mutation.NONE,
     Mutation.NONE,
     Mutation.NONE)
 
-ALL_FOODS = (SALT, AVOCADO, KIWI, EGG, CHEESE, RICE)
+ALL_FOODS = (RICE, AVOCADO, KIWI, EGG, CHEESE)
 GET_FOOD = {
     food.__getattribute__(attr): food
     for food in ALL_FOODS
@@ -105,7 +99,8 @@ class Level(object):
   def __hash__(self):
     return hash((self.sequence, self.level_num))
 
-LEVEL_CODES = ('ssss', 'ssasa', 'asksk', 'kske', 'ceascec', 'kcrrsr', 'cracker')
+LEVEL_CODES = ('rrrr', 'rrara', 'arkrk', 'rkke', 'keakke', 'ccaerce', 'cracker')
+AVAILABLE_FOODS_FOR_LEVEL = (0, 2, 3, 4, 4, 5, 5)
 ALL_LEVELS = frozenset([
     Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, 7)
 ])
@@ -118,7 +113,7 @@ GET_LEVEL = {
 def _getFoodsInLevel(level=None):
   if level == None:
     return ALL_FOODS
-  return ALL_FOODS[:min(level.level_num + 1, 6)]
+  return ALL_FOODS[:AVAILABLE_FOODS_FOR_LEVEL[level.level_num]]
 
 def _getSingleFoodStringRegex(level=None):
    foods_string = '[{}]'.format(''.join([f.character for f in _getFoodsInLevel(level)]))
