@@ -222,11 +222,11 @@ def evaluateInput(level_code, guess):
   if len(level.sequence) != len(processed_guess):
     return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
             f'Guess: {guess}\n' +
-            f'Invalid character. Please only include foods from the list of available foods.')
+             'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
   return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
           f'Guess: {guess}\n' +
           f'{"".join(str(f) for f in processed_guess)}\n' +
-          f'{"   ".join(pegs[p]p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING])}\n' +
+          f'{"   ".join(str(pegs[p]) + p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING])}\n' +
           f'{message}')
