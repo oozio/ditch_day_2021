@@ -102,7 +102,7 @@ class Level(object):
 LEVEL_CODES = ('rrrr', 'rrara', 'rkr', 'akrkr', 'rkke', 'keakke', 'ccaerce', 'cracker')
 AVAILABLE_FOODS_FOR_LEVEL = (0, 2, 3, 3, 4, 4, 5, 5)
 ALL_LEVELS = frozenset([
-    Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, 7)
+    Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, len(LEVEL_CODES))
 ])
 GET_LEVEL = {
     level.__getattribute__(attr): level
@@ -230,7 +230,7 @@ def evaluateInput(level_code, guess):
              'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
-  return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+  return (f'Level {level.level_num} / : {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
           f'Guess: {guess}\n' +
           f'{"".join(str(f) for f in processed_guess)}\n' +
           f'{"".join(p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING] for _ in range(pegs[p]))}\n' +
