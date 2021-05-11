@@ -55,9 +55,9 @@
             },
             {
                 "name": "guess",
-                "description": "e.g. 'SSSS' or ':salt: :salt: :salt: :salt:'",
+                "description": "e.g. 'RRAR' or 'rrar'",
                 "type": 3,
-                "required": 1
+                "required": 0
             }
         ]
     }

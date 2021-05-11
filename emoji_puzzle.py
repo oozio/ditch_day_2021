@@ -209,6 +209,16 @@ def evaluateInput(level_code, guess):
   if not level:
     return (f'Input (level): {level_code}\n' +
              'Invalid level code')
+  if not guess:
+    # return all level codes up to current level
+    level_nums = range(1, level.level_num + 1)
+    level_codes = [_processSequence(LEVEL_CODES[i]) for i in range(level.level_num)]
+    readable_level_codes = '\n'.join(
+        f'Level {level_nums[i]}: {"".join(str(f) for f in level_codes[i])}'
+        for i in range(level.level_num)
+    )
+    return ('Level codes:\n' +
+           f'{readable_level_codes}')
   if len(level.sequence) != len(guess):
     return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
             f'Guess: {guess}\n' +
