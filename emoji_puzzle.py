@@ -214,7 +214,7 @@ def evaluateInput(level_code, guess):
     level_nums = range(1, level.level_num + 1)
     level_codes = [_processSequence(LEVEL_CODES[i]) for i in range(level.level_num)]
     readable_level_codes = '\n'.join(
-        f'Level {level_nums[i]}: {"".join(str(f) for f in level_codes[i])}'
+        f'Level {level_nums[i]}: {"".join(str(f) for f in level_codes[i])} ({"".join(f.character for f in level_codes[i])})'
         for i in range(level.level_num)
     )
     return ('Level codes:\n' +
