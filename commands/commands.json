@@ -33,13 +33,13 @@
     }, 
     {
         "name": "calculate-time",
-        "description": "Put in some times or whatever (change hint)",
+        "description": "For calculating difference in times",
         "options": [
              {
                 "name": "time_string",
                 "description": "eg '1:00 - 0:30 - 0:15'",
                 "type": 3,
-                "required": 0
+                "required": 1
             }
         ]
     },
