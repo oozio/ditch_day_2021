@@ -99,7 +99,7 @@ class Level(object):
   def __hash__(self):
     return hash((self.sequence, self.level_num))
 
-LEVEL_CODES = ('rrrr', 'rrara', 'rkr', 'akrkr', 'rkke', 'keakke', 'ccaerce', 'cracker')
+LEVEL_CODES = ('rrrr', 'rrara', 'rkr', 'akrkr', 'rrer', 'keakke', 'ccaerce', 'cracker')
 AVAILABLE_FOODS_FOR_LEVEL = (0, 2, 3, 3, 4, 4, 5, 5)
 ALL_LEVELS = frozenset([
     Level(i, LEVEL_CODES[i], LEVEL_CODES[i-1]) for i in range(1, len(LEVEL_CODES))
@@ -196,8 +196,7 @@ def _getMessage(level, guess):
     return 'NO! WRONG!'
   next_level = GET_LEVEL.get(guess, None)
   if not next_level:
-    return ('**Congrats! that\'s right!**\n' +
-            '*You\'ve completed all the levels!*')
+    return '**Congrats! that\'s right!**'
   next_level_foods = ''.join(str(f) for f in _getFoodsInLevel(next_level))
   return ('**Congrats! that\'s right!**\n' +
          f'*Use this as the next level code.*\n' +
@@ -216,24 +215,22 @@ def evaluateInput(level_code, guess):
     level_codes = [_processSequence(LEVEL_CODES[i]) for i in range(level.level_num)]
     readable_level_codes = '\n'.join(
         f'Level {level_nums[i]}: {"".join(str(f) for f in level_codes[i])} ({"".join(f.character for f in level_codes[i])})'
-        if i < level.level_num else
-        f'Level {i + 1}: *UNKNOWN*'
-        for i in range(len(ALL_LEVELS))
+        for i in range(level.level_num)
     )
     return ('Level codes:\n' +
            f'{readable_level_codes}')
   if len(level.sequence) != len(guess):
-    return (f'Level {level.level_num} / {len(ALL_LEVELS) - 1}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+    return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
             f'Guess: {guess}\n' +
             f'Wrong number of foods. Try inputting {len(level.sequence)} foods for this level.')
   processed_guess = _processSequence(guess, level)
   if len(level.sequence) != len(processed_guess):
-    return (f'Level {level.level_num} / {len(ALL_LEVELS) - 1}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+    return (f'Level {level.level_num}: {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
             f'Guess: {guess}\n' +
              'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(level, processed_guess)
   message = _getMessage(level, processed_guess)
-  return (f'Level {level.level_num} / {len(ALL_LEVELS) - 1} : {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
+  return (f'Level {level.level_num} / : {level_code} - Available Foods: {"".join(str(f) for f in _getFoodsInLevel(level))}\n' + 
           f'Guess: {guess}\n' +
           f'{"".join(str(f) for f in processed_guess)}\n' +
           f'{"".join(p.value for p in [Peg.CORRECT, Peg.MISPLACED, Peg.MISSING] for _ in range(pegs[p]))}\n' +
