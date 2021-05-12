@@ -37,7 +37,7 @@
         "options": [
              {
                 "name": "time_string",
-                "description": "eg '1:00 - 0:30 - 0:15'",
+                "description": "eg '12:34 - 0:30 + 0:05' or '1234 - 30 + 5'",
                 "type": 3,
                 "required": 1
             }
