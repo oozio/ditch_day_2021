@@ -4,7 +4,7 @@ import requests
 
 import discord_utils
 import time_calculator
-import emoji_puzzle
+import hare.processor
 
 
 def lambda_handler(event, context):
@@ -28,7 +28,7 @@ def lambda_handler(event, context):
     if command == "hare-puzzle":
         level_code = discord_utils.get_input(data, "level_code")
         guess = discord_utils.get_input(data, "guess")
-        output = emoji_puzzle.evaluateInput(level_code, guess)
+        output = hare.processor.evaluateInput(level_code, guess)
         return discord_utils.format_response('MESSAGE_WITH_SOURCE', output)
 
     return discord_utils.format_response('MESSAGE_WITH_SOURCE', "didn't recognize command!! run away!!!")
