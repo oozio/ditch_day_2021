@@ -31,6 +31,9 @@ def lambda_handler(event, context):
         output = hare.processor.evaluateInput(level_code, guess)
         return discord_utils.format_response('MESSAGE_WITH_SOURCE', output)
 
+    if command == "channel-test":
+        return discord_utils.format_response('MESSAGE_WITH_SOURCE', channel_id)
+
     return discord_utils.format_response('MESSAGE_WITH_SOURCE', "didn't recognize command!! run away!!!")
     
     

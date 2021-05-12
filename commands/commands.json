@@ -60,5 +60,10 @@
                 "required": 0
             }
         ]
+    },
+    {
+        "name": "channel-test",
+        "description": "Testing",
+        "options": []
     }
 ]
