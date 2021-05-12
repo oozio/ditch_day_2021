@@ -1,7 +1,7 @@
 import enum
 import re
 
-import food
+from . import food
 
 class Level(object):
   def __init__(self, level_num, sequence, access_code):

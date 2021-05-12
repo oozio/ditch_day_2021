@@ -1,10 +1,10 @@
 import enum
 import re
 
-import food
-import level
-import mutation
-import peg
+from . import food
+from . import level
+from . import mutation
+from . import peg
 
 def _getSingleFoodStringRegex(current_level=None):
    foods_string = '[{}]'.format(''.join([f.character for f in level.getFoodsInLevel(current_level)]))

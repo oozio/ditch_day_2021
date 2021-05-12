@@ -1,7 +1,7 @@
 import enum
 import re
 
-import mutation
+from . import mutation
 
 class Food(object):
   def __init__(self, emoji, character, mutate_left, mutate_center, mutate_right):
