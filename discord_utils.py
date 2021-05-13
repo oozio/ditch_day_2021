@@ -18,8 +18,16 @@ PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key", WithDecryption=True)[
 BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token", WithDecryption=True)['Parameter']['Value']
 HEADERS = {"Authorization": f"Bot {BOT_TOKEN}"}
 
+def get_channel_by_id(channel_id):
+    """ Returns a channel object.
+
+    channel object params found at https://discord.com/developers/docs/resources/channel
+    """
+    # TODO
+    pass
+
 def get_channel(channel_name, server_name):
-    """ Returns  a channel object.
+    """ Returns a channel object.
 
     channel object params found at https://discord.com/developers/docs/resources/channel
     """
