@@ -8,8 +8,11 @@ from hare import food, level, mutation, peg
 _VIEW_AND_USE_SLASH_COMMANDS = 0x0080000400
 
 def _getSingleFoodStringRegex(current_level=None):
-   # TODO allow emoji input
-   foods_string = '[{}]'.format(''.join([f.character for f in level.getFoodsInLevel(current_level)]))
+   foods_string = '[{}]'.format(''.join([
+       f.__getattribute__(attr)
+       for f in level.getFoodsInLevel(current_level)
+       for attr in ['character', 'emoji_unicode']
+   ]))
    return rf'(?P<head>{foods_string})\s*(?P<tail>.*)'
 
 def _processSequence(sequence, current_level=None):

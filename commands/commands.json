@@ -49,7 +49,7 @@
         "options": [
             {
                 "name": "guess",
-                "description": "e.g. 'RRAR' or 'rrar'",
+                "description": "e.g. 'rrar', 'RRAR', or ':rice::rice::avocado::rice:'",
                 "type": 3,
                 "required": 0
             }
