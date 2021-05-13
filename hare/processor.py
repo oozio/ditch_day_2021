@@ -91,7 +91,7 @@ def _getPegs(current_level, guess):
 
   return peg_counts
 
-def _getMessageAndProcessGuess(current_level, guess, server_name):
+def _getMessageAndProcessGuess(current_level, guess, server_id):
   if current_level.sequence != guess:
     return 'NO! WRONG!'
   next_level = level.GET_LEVEL.get(current_level.level_num + 1, None)
@@ -99,8 +99,9 @@ def _getMessageAndProcessGuess(current_level, guess, server_name):
     return ('**Congrats! that\'s right!**\n' +
             '*You\'ve completed all the levels!*')
   next_level_foods = ''.join(str(f) for f in level.getFoodsInLevel(next_level))
-  next_level_channel = discord_utils.get_channel(level.channel_name, server_name)
-  discord_utils.set_channel_permissions('everyone', next_level_channel['id'], _VIEW_AND_USE_SLASH_COMMANDS)
+  next_level_channel = discord_utils.get_channel(level.channel_name, server_id)
+  everyone_id = server_id # @everyone has same role_id as server_id
+  discord_utils.set_channel_permissions(everyone_id, next_level_channel['id'], _VIEW_AND_USE_SLASH_COMMANDS)
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
@@ -111,11 +112,12 @@ def _getAvailableFoodsString(current_level):
   available_foods_characters = "".join(f.character for f in available_foods)
   return f'Available foods: {available_foods_emojis} ({available_foods_characters})'
 
-def _processAdminCommandAndGetMessage(server, command):
+def _processAdminCommandAndGetMessage(server_id, command):
+  everyone_id = server_id # @everyone has same role_id as server_id
   if guess == 'start':
     for l in level.ALL_LEVELS:
-      channel = discord_utils.get_channel(l.channel_name, server_name)
-      discord_utils.set_channel_permissions('everyone',
+      channel = discord_utils.get_channel(l.channel_name, server_id)
+      discord_utils.set_channel_permissions(everyone_id,
                                             l.channel_name,
                                             _VIEW_AND_USE_SLASH_COMMANDS
                                                 if l.level_num == 1
@@ -123,8 +125,8 @@ def _processAdminCommandAndGetMessage(server, command):
     return 'Hid all hare puzzle channels except level 1.'
   elif guess == 'reset':
     for l in level.ALL_LEVELS:
-      channel = discord_utils.get_channel(l.channel_name, server_name)
-      discord_utils.set_channel_permissions('everyone',
+      channel = discord_utils.get_channel(l.channel_name, server_id)
+      discord_utils.set_channel_permissions(everyone_id,
                                             l.channel_name,
                                             _NO_PERMISSIONS)
     return 'Hid all hare puzzle channels.'
@@ -132,13 +134,12 @@ def _processAdminCommandAndGetMessage(server, command):
   return 'Input either \"start\" or \"reset\"'
 
 def evaluateInput(channel_id, guess):
-  # TODO add server name fetching
-  server_name = 'Tomorrow 2021'
   channel = discord_utils.get_channel_by_id(channel_id)
+  server_id = channel['guild_id']
   processed_level_code = _processSequence(level_code)
   channel_name = channel['name']
   if channel_name == 'admin-channel':
-    return _processAdminCommandAndGetMessage(server_name, guess)
+    return _processAdminCommandAndGetMessage(server_id, guess)
   current_level = level.GET_LEVEL.get(channel_name, None)
   if not current_level:
     # not hare puzzle channel
@@ -158,7 +159,7 @@ def evaluateInput(channel_id, guess):
             f'Guess: {guess}\n' +
              'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(current_level, processed_guess)
-  message = _getMessageAndProcessGuess(current_level, processed_guess, server_name)
+  message = _getMessageAndProcessGuess(current_level, processed_guess, server_id)
   return (f'{_getAvailableFoodsString(current_level)}\n' +
           f'Guess: {guess}\n' +
           f'{"".join(str(f) for f in processed_guess)}\n' +
