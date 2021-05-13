@@ -64,6 +64,13 @@
     {
         "name": "channel-test",
         "description": "Testing",
-        "options": []
+        "options": [
+            {
+                "name": "arg",
+                "description": "arg",
+                "type": 3,
+                "required": 0
+            }
+        ]
     }
 ]
