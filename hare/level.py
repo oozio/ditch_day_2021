@@ -10,7 +10,7 @@ class Level(object):
     super(Level, self).__setattr__('channel_name', channel_name)
 
   def __repr__(self):
-    return f'Level(level_num: {self.level_num}, sequence: {self.sequence}, access_code: {self.access_code})'
+    return f'Level(level_num: {self.level_num}, sequence: {self.sequence}, channel_name: {self.channel_name})'
 
   def __setattr__(self, name, value):
     """ make Level immutable """
