@@ -101,7 +101,7 @@ def _getMessageAndProcessGuess(current_level, guess, server_id):
   next_level_foods = ''.join(str(f) for f in level.getFoodsInLevel(next_level))
   next_level_channel = discord_utils.get_channel(current_level.channel_name, server_id)
   everyone_id = server_id # @everyone has same role_id as server_id
-  discord_utils.set_channel_permissions(everyone_id, next_level_channel['id'], _VIEW_AND_USE_SLASH_COMMANDS)
+  discord_utils.set_channel_permissions(everyone_id, next_level_channel['id'], server_id, _VIEW_AND_USE_SLASH_COMMANDS)
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
@@ -119,6 +119,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
       channel = discord_utils.get_channel(l.channel_name, server_id)
       discord_utils.set_channel_permissions(everyone_id,
                                             l.channel_name,
+                                            server_id,
                                             _VIEW_AND_USE_SLASH_COMMANDS
                                                 if l.level_num == 1
                                                 else _NO_PERMISSIONS)
@@ -128,6 +129,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
       channel = discord_utils.get_channel(l.channel_name, server_id)
       discord_utils.set_channel_permissions(everyone_id,
                                             l.channel_name,
+                                            server_id,
                                             _NO_PERMISSIONS)
     return 'Hid all hare puzzle channels.'
 
