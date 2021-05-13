@@ -6,6 +6,8 @@ from hare import food, level, mutation, peg
 
 # From https://discord.com/developers/docs/topics/permissions#permissions
 _VIEW_AND_USE_SLASH_COMMANDS = 0x0080000400
+_NO_PERMISSIONS = 0x0000000000
+
 
 def _getSingleFoodStringRegex(current_level=None):
    foods_string = '[{}]'.format(''.join([
@@ -98,7 +100,7 @@ def _getMessageAndProcessGuess(current_level, guess, server_name):
             '*You\'ve completed all the levels!*')
   next_level_foods = ''.join(str(f) for f in level.getFoodsInLevel(next_level))
   next_level_channel = discord_utils.get_channel(level.channel_name, server_name)
-  discord_utils.set_channel_permissions('everyone', next_level_channel['id'])
+  discord_utils.set_channel_permissions('everyone', next_level_channel['id'], _VIEW_AND_USE_SLASH_COMMANDS)
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
@@ -109,10 +111,35 @@ def _getAvailableFoodsString(current_level):
   available_foods_characters = "".join(f.character for f in available_foods)
   return f'Available foods: {available_foods_emojis} ({available_foods_characters})'
 
+def _processAdminCommandAndGetMessage(server, command):
+  if guess == 'start':
+    for l in level.ALL_LEVELS:
+      channel = discord_utils.get_channel(l.channel_name, server_name)
+      discord_utils.set_channel_permissions('everyone',
+                                            l.channel_name,
+                                            _VIEW_AND_USE_SLASH_COMMANDS
+                                                if l.level_num == 1
+                                                else _NO_PERMISSIONS)
+    return 'Hid all hare puzzle channels except level 1.'
+  elif guess == 'reset':
+    for l in level.ALL_LEVELS:
+      channel = discord_utils.get_channel(l.channel_name, server_name)
+      discord_utils.set_channel_permissions('everyone',
+                                            l.channel_name,
+                                            _NO_PERMISSIONS)
+    return 'Hid all hare puzzle channels.'
+
+  return 'Input either \"start\" or \"reset\"'
+
 def evaluateInput(channel_id, guess):
+  # TODO add server name fetching
+  server_name = 'Tomorrow 2021'
   channel = discord_utils.get_channel_by_id(channel_id)
   processed_level_code = _processSequence(level_code)
-  current_level = level.GET_LEVEL.get(channel['name'], None)
+  channel_name = channel['name']
+  if channel_name == 'admin-channel':
+    return _processAdminCommandAndGetMessage(server_name, guess)
+  current_level = level.GET_LEVEL.get(channel_name, None)
   if not current_level:
     # not hare puzzle channel
     return (f'Only call this from within one of the hare puzzle channels.')
@@ -131,8 +158,6 @@ def evaluateInput(channel_id, guess):
             f'Guess: {guess}\n' +
              'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(current_level, processed_guess)
-  # TODO add server name fetching
-  server_name = 'Tomorrow 2021'
   message = _getMessageAndProcessGuess(current_level, processed_guess, server_name)
   return (f'{_getAvailableFoodsString(current_level)}\n' +
           f'Guess: {guess}\n' +
