@@ -73,11 +73,12 @@ def get_channel(channel_name, server_name):
     channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_name]
     return get_channel_by_id(channel_id)
 
-def set_channel_permissions(role_id, channel_id, grant_type):
+def set_channel_permissions(role_id, channel_name, server_id, grant_type):
     """ Sets a channel's permissions for a given role.
 
     permissions found at https://discord.com/developers/docs/topics/permissions#permissions])
     """
+    channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_id]
     permissions = _form_permission()
     
     put_body = {
@@ -85,8 +86,6 @@ def set_channel_permissions(role_id, channel_id, grant_type):
         grant_type: permissions
     }
     
-    print(put_body)
-
     url = f"{BASE_URL}/channels/{channel_id}/permissions/{role_id}"
 
     print(requests.put(url, json=put_body, headers=HEADERS).__dict__)
