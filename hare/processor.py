@@ -114,7 +114,7 @@ def _getAvailableFoodsString(current_level):
 
 def _processAdminCommandAndGetMessage(server_id, command):
   everyone_id = server_id # @everyone has same role_id as server_id
-  if guess == 'start':
+  if command == 'start':
     for l in level.ALL_LEVELS:
       channel = discord_utils.get_channel(l.channel_name, server_id)
       discord_utils.set_channel_permissions(everyone_id,
@@ -123,7 +123,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
                                                 if l.level_num == 1
                                                 else _NO_PERMISSIONS)
     return 'Hid all hare puzzle channels except level 1.'
-  elif guess == 'reset':
+  elif command == 'reset':
     for l in level.ALL_LEVELS:
       channel = discord_utils.get_channel(l.channel_name, server_id)
       discord_utils.set_channel_permissions(everyone_id,
@@ -136,7 +136,6 @@ def _processAdminCommandAndGetMessage(server_id, command):
 def evaluateInput(channel_id, guess):
   channel = discord_utils.get_channel_by_id(channel_id)
   server_id = channel['guild_id']
-  processed_level_code = _processSequence(level_code)
   channel_name = channel['name']
   if channel_name == 'admin-channel':
     return _processAdminCommandAndGetMessage(server_id, guess)
