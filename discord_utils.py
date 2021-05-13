@@ -100,7 +100,7 @@ def check_input(event):
         return format_response("PONG", None)
 
 def get_input(data, target):
-    for option in data.get('options'):
+    for option in data.get('options', []):
         if option['name'] == target:
             return option['value']
 
