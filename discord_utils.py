@@ -1,4 +1,5 @@
 import boto3
+import requests
 
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
