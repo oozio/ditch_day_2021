@@ -15,6 +15,7 @@ def lambda_handler(event, context):
     body = event["body-json"]
     data = body["data"]
     channel_id = body["channel_id"]
+    server_id = body["guild_id"]
     
     command = data['name']
 
