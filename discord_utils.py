@@ -18,6 +18,21 @@ PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key", WithDecryption=True)[
 BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token", WithDecryption=True)['Parameter']['Value']
 HEADERS = {"Authorization": f"Bot {BOT_TOKEN}"}
 
+def get_channel(channel_name, server_name):
+    """ Returns  a channel object.
+
+    channel object params found at https://discord.com/developers/docs/resources/channel
+    """
+    # TODO
+    pass
+
+def set_channel_permissions(role, channel_id, new_permissions):
+    """ Sets a channel's permissions for a given role.
+
+    permissions found at https://discord.com/developers/docs/topics/permissions#permissions])
+    """
+    # TODO
+    pass
 
 def get_messages(channel_id, limit, specified_message):
     # gets the last <limit> messages from the specified channel, and appends any message specified by id
