@@ -18,7 +18,7 @@ PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key", WithDecryption=True)[
 BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token", WithDecryption=True)['Parameter']['Value']
 HEADERS = {
     "Authorization": f"Bot {BOT_TOKEN}",
-    "Content-Type", "application/json"
+    "Content-Type": "application/json"
 }
 
 _CHANNEL_IDS_BY_NAME_AND_SERVER = {
