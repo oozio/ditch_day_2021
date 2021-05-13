@@ -18,21 +18,35 @@ PUBLIC_KEY = ssm.get_parameter(Name="/discord/public_key", WithDecryption=True)[
 BOT_TOKEN = ssm.get_parameter(Name="/discord/bot_token", WithDecryption=True)['Parameter']['Value']
 HEADERS = {"Authorization": f"Bot {BOT_TOKEN}"}
 
+_CHANNEL_IDS_BY_NAME_AND_SERVER = {
+    ('hare-puzzle-level-1', 'Tomorrow 2021'): '841887525379112960',
+    ('hare-puzzle-level-2', 'Tomorrow 2021'): '841887647051153429',
+    ('hare-puzzle-level-3', 'Tomorrow 2021'): '841887669255667752',
+    ('hare-puzzle-level-4', 'Tomorrow 2021'): '841887706212466688',
+    ('hare-puzzle-level-5', 'Tomorrow 2021'): '841887729616551956',
+    ('hare-puzzle-level-6', 'Tomorrow 2021'): '841887759336996864',
+    ('hare-puzzle-level-7', 'Tomorrow 2021'): '841887780467507223',
+    ('admin-channel', 'Tomorrow 2021'): '842265337747210240'
+}
+
 def get_channel_by_id(channel_id):
     """ Returns a channel object.
 
-    channel object params found at https://discord.com/developers/docs/resources/channel
+    returns channel object (dict).
+    Params found at https://discord.com/developers/docs/resources/channel
     """
-    # TODO
-    pass
+    url = f"https://discord.com/api/v8/channels/{channel_id}"
+    return requests.get(url, headers=HEADERS).json()
 
 def get_channel(channel_name, server_name):
     """ Returns a channel object.
 
-    channel object params found at https://discord.com/developers/docs/resources/channel
+    returns channel object (dict).
+    Params found at https://discord.com/developers/docs/resources/channel
     """
-    # TODO
-    pass
+    # TODO make this better??
+    channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_name]
+    return get_channel_by_id(channel_id)
 
 def set_channel_permissions(role, channel_id, new_permissions):
     """ Sets a channel's permissions for a given role.
