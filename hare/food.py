@@ -78,5 +78,5 @@ ALL_FOODS = (RICE, AVOCADO, KIWI, EGG, CHEESE)
 GET_FOOD = {
     food.__getattribute__(attr): food
     for food in ALL_FOODS
-    for attr in ['emoji', 'character']
+    for attr in ['emoji_unicode', 'character']
 }
