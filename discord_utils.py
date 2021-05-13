@@ -34,6 +34,19 @@ _CHANNEL_IDS_BY_NAME_AND_SERVER = {
     ('admin-channel', '829131678839603270'): '842265337747210240'
 }
 
+_PERMISSIONS = {
+    "VIEW_AND_USE_SLASH_COMMANDS": 0x0080000400,
+    "ADD_REACTIONS": 0x0000000040, 
+    "USE_EXTERNAL_EMOJIS": 0x0000040000,
+    "SEND_MESSAGES": 0x0000000800
+}
+
+def _form_permission():
+    result = 0
+    for permission in _PERMISSIONS.values():
+        result = result | permission
+    return result
+
 def get_roles(server_id):
     url = f"{BASE_URL}/guilds/{server_id}/roles"
     return requests.get(url, headers=HEADERS).json()
@@ -47,6 +60,9 @@ def get_channel_by_id(channel_id):
     url = f"https://discord.com/api/v8/channels/{channel_id}"
     return requests.get(url, headers=HEADERS).json()
 
+def set_role(user_id, role_id):
+    pass
+
 def get_channel(channel_name, server_name):
     """ Returns a channel object.
 
@@ -57,13 +73,24 @@ def get_channel(channel_name, server_name):
     channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_name]
     return get_channel_by_id(channel_id)
 
-def set_channel_permissions(role_id, channel_id, new_permissions):
+def set_channel_permissions(role_id, channel_id, grant_type):
     """ Sets a channel's permissions for a given role.
 
     permissions found at https://discord.com/developers/docs/topics/permissions#permissions])
     """
-    # TODO
-    pass
+    permissions = _form_permission()
+    
+    put_body = {
+        "type": 0, # roles
+        grant_type: permissions
+    }
+    
+    print(put_body)
+
+    url = f"{BASE_URL}/channels/{channel_id}/permissions/{role_id}"
+
+    print(requests.put(url, json=put_body, headers=HEADERS).__dict__)
+
 
 def get_messages(channel_id, limit, specified_message):
     # gets the last <limit> messages from the specified channel, and appends any message specified by id
