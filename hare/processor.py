@@ -4,11 +4,6 @@ import re
 import discord_utils
 from hare import food, level, mutation, peg
 
-# From https://discord.com/developers/docs/topics/permissions#permissions
-_VIEW_AND_USE_SLASH_COMMANDS = 0x0080000400
-_NO_PERMISSIONS = 0x0000000000
-
-
 def _getSingleFoodStringRegex(current_level=None):
    foods_string = '[{}]'.format(''.join([
        f.__getattribute__(attr)
@@ -101,7 +96,11 @@ def _getMessageAndProcessGuess(current_level, guess, server_id):
   next_level_foods = ''.join(str(f) for f in level.getFoodsInLevel(next_level))
   next_level_channel = discord_utils.get_channel(current_level.channel_name, server_id)
   everyone_id = server_id # @everyone has same role_id as server_id
-  discord_utils.set_channel_permissions(everyone_id, next_level_channel['id'], server_id, _VIEW_AND_USE_SLASH_COMMANDS)
+  discord_utils.set_channel_permissions(
+      everyone_id,
+      next_level_channel['id'],
+      server_id,
+      'allow')
   return ('**Congrats! that\'s right!**\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
@@ -120,9 +119,9 @@ def _processAdminCommandAndGetMessage(server_id, command):
       discord_utils.set_channel_permissions(everyone_id,
                                             l.channel_name,
                                             server_id,
-                                            _VIEW_AND_USE_SLASH_COMMANDS
+                                            'allow'
                                                 if l.level_num == 1
-                                                else _NO_PERMISSIONS)
+                                                else 'deny')
     return 'Hid all hare puzzle channels except level 1.'
   elif command == 'reset':
     for l in level.ALL_LEVELS:
@@ -130,7 +129,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
       discord_utils.set_channel_permissions(everyone_id,
                                             l.channel_name,
                                             server_id,
-                                            _NO_PERMISSIONS)
+                                            'deny')
     return 'Hid all hare puzzle channels.'
 
   return 'Input either \"start\" or \"reset\"'
