@@ -98,7 +98,7 @@ def _getMessageAndProcessGuess(current_level, guess, server_id):
   everyone_id = server_id # @everyone has same role_id as server_id
   discord_utils.set_channel_permissions(
       everyone_id,
-      next_level_channel['id'],
+      next_level_channel['name'],
       server_id,
       'allow')
   return ('**Congrats! that\'s right!**\n' +
