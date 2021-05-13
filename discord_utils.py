@@ -12,6 +12,7 @@ RESPONSE_TYPES =  {
                     "ACK_WITH_SOURCE": 5
                   }
 
+BASE_URL = "https://discord.com/api/v8"
 
 ssm = boto3.client('ssm', region_name='us-east-2')
 
@@ -32,6 +33,10 @@ _CHANNEL_IDS_BY_NAME_AND_SERVER = {
     ('hare-puzzle-level-7', '829131678839603270'): '841887780467507223',
     ('admin-channel', '829131678839603270'): '842265337747210240'
 }
+
+def get_roles(server_id):
+    url = f"{BASE_URL}/guilds/{server_id}/roles"
+    return requests.get(url, headers=HEADERS).json()
 
 def get_channel_by_id(channel_id):
     """ Returns a channel object.
@@ -95,7 +100,7 @@ def check_input(event):
         return format_response("PONG", None)
 
 def get_input(data, target):
-    for option in data['options']:
+    for option in data.get('options'):
         if option['name'] == target:
             return option['value']
 
