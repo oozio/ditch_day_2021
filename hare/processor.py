@@ -99,7 +99,7 @@ def _getMessageAndProcessGuess(current_level, guess, server_id):
     return ('**Congrats! that\'s right!**\n' +
             '*You\'ve completed all the levels!*')
   next_level_foods = ''.join(str(f) for f in level.getFoodsInLevel(next_level))
-  next_level_channel = discord_utils.get_channel(level.channel_name, server_id)
+  next_level_channel = discord_utils.get_channel(current_level.channel_name, server_id)
   everyone_id = server_id # @everyone has same role_id as server_id
   discord_utils.set_channel_permissions(everyone_id, next_level_channel['id'], _VIEW_AND_USE_SLASH_COMMANDS)
   return ('**Congrats! that\'s right!**\n' +
