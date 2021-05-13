@@ -26,9 +26,8 @@ def lambda_handler(event, context):
         return discord_utils.format_response('MESSAGE_WITH_SOURCE', content)
         
     if command == "hare-puzzle":
-        level_code = discord_utils.get_input(data, "level_code")
         guess = discord_utils.get_input(data, "guess")
-        output = hare.processor.evaluateInput(level_code, guess)
+        output = hare.processor.evaluateInput(channel_id, guess)
         return discord_utils.format_response('MESSAGE_WITH_SOURCE', output)
 
     # vvv TEMP (REMOVE) vvv

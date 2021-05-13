@@ -48,12 +48,6 @@
         "description": "Put in a guess for the March Hare's puzzle",
         "options": [
             {
-                "name": "level_code",
-                "description": "The code for a specific level of the puzzle",
-                "type": 3,
-                "required": 1
-            },
-            {
                 "name": "guess",
                 "description": "e.g. 'RRAR' or 'rrar'",
                 "type": 3,
