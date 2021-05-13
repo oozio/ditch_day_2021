@@ -1,12 +1,14 @@
 import enum
 import re
 
-from . import food
-from . import level
-from . import mutation
-from . import peg
+import discord_utils
+from hare import food, level, mutation, peg
+
+# From https://discord.com/developers/docs/topics/permissions#permissions
+_VIEW_AND_USE_SLASH_COMMANDS = 0x0080000400
 
 def _getSingleFoodStringRegex(current_level=None):
+   # TODO allow emoji input
    foods_string = '[{}]'.format(''.join([f.character for f in level.getFoodsInLevel(current_level)]))
    return rf'(?P<head>{foods_string})\s*(?P<tail>.*)'
 
@@ -77,56 +79,59 @@ def _getPegs(current_level, guess):
     if solution > right_position:
       peg_counts[peg.Peg.MISPLACED] += min(solution, guess + guess_inverted)
       peg_counts[peg.Peg.MISPLACED] -= right_position + right_position_inverted
-  
+
   peg_counts[peg.Peg.MISSING] = (len(current_level.sequence)
                                - peg_counts[peg.Peg.CORRECT]
                                - peg_counts[peg.Peg.MISPLACED])
 
   return peg_counts
 
-def _getMessage(current_level, guess):
+def _getMessageAndProcessGuess(current_level, guess, server_name):
   if current_level.sequence != guess:
     return 'NO! WRONG!'
-  next_level = level.GET_LEVEL.get(guess, None)
+  next_level = level.GET_LEVEL.get(current_level.level_num + 1, None)
   if not next_level:
     return ('**Congrats! that\'s right!**\n' +
             '*You\'ve completed all the levels!*')
   next_level_foods = ''.join(str(f) for f in level.getFoodsInLevel(next_level))
+  next_level_channel = discord_utils.get_channel(level.channel_name, server_name)
+  discord_utils.set_channel_permissions('everyone', next_level_channel['id'])
   return ('**Congrats! that\'s right!**\n' +
-         f'*Use this as the next level code.*\n' +
          f'*The next level will have {len(next_level.sequence)} foods.*\n' +
          f'*Types of foods in the next level: {next_level_foods}*')
 
-def evaluateInput(level_code, guess):
+def _getAvailableFoodsString(current_level):
+  available_foods = level.getFoodsInLevel(current_level)
+  available_foods_emojis = "".join(str(f) for f in available_foods)
+  available_foods_characters = "".join(f.character for f in available_foods)
+  return f'Available foods: {available_foods_emojis} ({available_foods_characters})'
+
+def evaluateInput(channel_id, guess):
+  channel = discord_utils.get_channel_by_id(channel_id)
   processed_level_code = _processSequence(level_code)
-  current_level = level.GET_LEVEL.get(processed_level_code, None)
+  current_level = level.GET_LEVEL.get(channel['name'], None)
   if not current_level:
-    return (f'Input (level): {level_code}\n' +
-             'Invalid level code')
+    # not hare puzzle channel
+    return (f'Only call this from within one of the hare puzzle channels.')
   if not guess:
-    # return all level codes up to current level
-    level_nums = range(1, current_level.level_num + 1)
-    level_codes = [_processSequence(level.LEVEL_CODES[i]) for i in range(current_level.level_num)]
-    readable_level_codes = '\n'.join(
-        f'Level {level_nums[i]}: {"".join(str(f) for f in level_codes[i])} ({"".join(f.character for f in level_codes[i])})'
-        if i < current_level.level_num else
-        f'Level {i + 1}: *UNKNOWN*'
-        for i in range(len(level.ALL_LEVELS))
-    )
-    return ('Level codes:\n' +
-           f'{readable_level_codes}')
+    # return current level info
+    return (f'{_getAvailableFoodsString(current_level)}\n' +
+            f'There are {len(current_level.sequence)} foods in this level.')
   if len(current_level.sequence) != len(guess):
-    return (f'Level {current_level.level_num} / {len(level.ALL_LEVELS)}: {level_code} - Available Foods: {"".join(str(f) for f in level.getFoodsInLevel(current_level))}\n' + 
+    # wrong number of foods in guess
+    return (f'{_getAvailableFoodsString(current_level)}\n' +
             f'Guess: {guess}\n' +
             f'Wrong number of foods. Try inputting {len(current_level.sequence)} foods for this level.')
   processed_guess = _processSequence(guess, current_level)
   if len(current_level.sequence) != len(processed_guess):
-    return (f'Level {current_level.level_num} / {len(level.ALL_LEVELS)}: {level_code} - Available Foods: {"".join(str(f) for f in level.getFoodsInLevel(current_level))}\n' + 
+    return (f'{_getAvailableFoodsString(current_level)}\n' +
             f'Guess: {guess}\n' +
              'Invalid character. Please only include foods from the list of available foods.')
   pegs = _getPegs(current_level, processed_guess)
-  message = _getMessage(current_level, processed_guess)
-  return (f'Level {current_level.level_num} / {len(level.ALL_LEVELS)} : {level_code} - Available Foods: {"".join(str(f) for f in level.getFoodsInLevel(current_level))}\n' + 
+  # TODO add server name fetching
+  server_name = 'Tomorrow 2021'
+  message = _getMessageAndProcessGuess(current_level, processed_guess, server_name)
+  return (f'{_getAvailableFoodsString(current_level)}\n' +
           f'Guess: {guess}\n' +
           f'{"".join(str(f) for f in processed_guess)}\n' +
           f'{"".join(p.value for p in [peg.Peg.CORRECT, peg.Peg.MISPLACED, peg.Peg.MISSING] for _ in range(pegs[p]))}\n' +

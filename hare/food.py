@@ -1,7 +1,7 @@
 import enum
 import re
 
-from . import mutation
+from hare import mutation
 
 class Food(object):
   def __init__(self, emoji, character, mutate_left, mutate_center, mutate_right):
