@@ -31,6 +31,11 @@ def lambda_handler(event, context):
         output = hare.processor.evaluateInput(channel_id, guess)
         return discord_utils.format_response('MESSAGE_WITH_SOURCE', output)
 
+    if command == "consume":
+        substance = discord_utils.get_input(data, "substance")
+        output = garden.processor.evaluateInput(channel_id, None, substance)
+        return discord_utils.format_response('MESSAGE_WITH_SOURCE', output)
+
     # vvv TEMP (REMOVE) vvv
     if command == "channel-test":
         arg = discord_utils.get_input(data, "arg")

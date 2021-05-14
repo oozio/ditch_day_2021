@@ -56,6 +56,18 @@
         ]
     },
     {
+        "name": "consume",
+        "description": "Consume a substance of your choice",
+        "options": [
+            {
+                "name": "substance",
+                "description": "e.g. 'cake' or 'drink'",
+                "type": 3,
+                "required": 1
+            }
+        ]
+    },
+    {
         "name": "channel-test",
         "description": "Testing",
         "options": [
