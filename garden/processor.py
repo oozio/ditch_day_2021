@@ -13,7 +13,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
     return 'Removed all size roles.'
   return 'Input either \"start\" or \"reset\"'
 
-def processInput(channel_id, user_id, substance):
+def evaluateInput(channel_id, user_id, substance):
   channel = discord_utils.get_channel_by_id(channel_id)
   if channel['name'] == 'admin-channel':
     return _processAdminCommandAndGetMessage(server_id, substance)
