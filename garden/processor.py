@@ -1,5 +1,6 @@
 import re
 
+from garden import critique
 import discord_utils
 
 _CHANNEL_PATTERN = re.compile(r'garden-\d\d?')
@@ -19,5 +20,5 @@ def evaluateInput(channel_id, user_id, substance):
   if channel['name'] == 'admin-channel':
     return _processAdminCommandAndGetMessage(server_id, substance)
   if not _CHANNEL_PATTERN.match(channel['name']):
-    return f'You eat **{substance}**. It tastes like you would expect.'
+    return critique.getCritiqueOf(substance)
   # TODO add processing for puzzle
