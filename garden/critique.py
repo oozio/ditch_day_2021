@@ -14,7 +14,7 @@ _CRITIQUES = (
   'The texture is offputting.',
   'It burns the back of your mouth.',
   'It\'s physically hard to swallow.',
-  'Just thinking about makes you want to gag.',
+  'Just thinking about it makes you want to gag.',
   'It tastes like medicine. Ew...',
   'Cardboard has more flavor than this.',
   'It\'s surprisingly crunchy.',
