@@ -15,6 +15,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
 
 def evaluateInput(channel_id, user_id, substance):
   channel = discord_utils.get_channel_by_id(channel_id)
+  server_id = channel['guild_id']
   if channel['name'] == 'admin-channel':
     return _processAdminCommandAndGetMessage(server_id, substance)
   if not _CHANNEL_PATTERN.match(channel['name']):
