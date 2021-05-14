@@ -23,15 +23,17 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+SERVER_1 = '829131678839603270'
 _CHANNEL_IDS_BY_NAME_AND_SERVER = {
-    ('hare-puzzle-level-1', '829131678839603270'): '841887525379112960',
-    ('hare-puzzle-level-2', '829131678839603270'): '841887647051153429',
-    ('hare-puzzle-level-3', '829131678839603270'): '841887669255667752',
-    ('hare-puzzle-level-4', '829131678839603270'): '841887706212466688',
-    ('hare-puzzle-level-5', '829131678839603270'): '841887729616551956',
-    ('hare-puzzle-level-6', '829131678839603270'): '841887759336996864',
-    ('hare-puzzle-level-7', '829131678839603270'): '841887780467507223',
-    ('admin-channel', '829131678839603270'): '842265337747210240'
+    ('hare-puzzle-discussion', SERVER_1): '840727031984553984',
+    ('hare-puzzle-level-1', SERVER_1): '841887525379112960',
+    ('hare-puzzle-level-2', SERVER_1): '841887647051153429',
+    ('hare-puzzle-level-3', SERVER_1): '841887669255667752',
+    ('hare-puzzle-level-4', SERVER_1): '841887706212466688',
+    ('hare-puzzle-level-5', SERVER_1): '841887729616551956',
+    ('hare-puzzle-level-6', SERVER_1): '841887759336996864',
+    ('hare-puzzle-level-7', SERVER_1): '841887780467507223',
+    ('admin-channel', SERVER_1): '842265337747210240'
 }
 
 _PERMISSIONS = {

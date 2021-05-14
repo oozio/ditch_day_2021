@@ -122,7 +122,12 @@ def _processAdminCommandAndGetMessage(server_id, command):
                                             'allow'
                                                 if l.level_num == 1
                                                 else 'deny')
-    return 'Hid all hare puzzle channels except level 1.'
+    channel = discord_utils.get_channel('hare-puzzle-discussion', server_id)
+    discord_utils.set_channel_permissions(everyone_id,
+                                          'hare-puzzle-discussion',
+                                          server_id,
+                                          'allow')
+    return 'Hid all hare puzzle channels except level 1 and discussion.'
   elif command == 'reset':
     for l in level.ALL_LEVELS:
       channel = discord_utils.get_channel(l.channel_name, server_id)
@@ -130,6 +135,11 @@ def _processAdminCommandAndGetMessage(server_id, command):
                                             l.channel_name,
                                             server_id,
                                             'deny')
+    channel = discord_utils.get_channel('hare-puzzle-discussion', server_id)
+    discord_utils.set_channel_permissions(everyone_id,
+                                          'hare-puzzle-discussion',
+                                          server_id,
+                                          'deny')
     return 'Hid all hare puzzle channels.'
 
   return 'Input either \"start\" or \"reset\"'
