@@ -5,6 +5,7 @@ import requests
 import discord_utils
 import time_calculator
 import hare.processor
+import garden.processor
 
 
 def lambda_handler(event, context):

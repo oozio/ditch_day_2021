@@ -11,6 +11,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
   if command == 'reset':
     # TODO remove all size roles
     return 'Removed all size roles.'
+  return 'Input either \"start\" or \"reset\"'
 
 def processInput(channel_id, user_id, substance):
   channel = discord_utils.get_channel_by_id(channel_id)
