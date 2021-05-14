@@ -18,5 +18,5 @@ def evaluateInput(channel_id, user_id, substance):
   if channel['name'] == 'admin-channel':
     return _processAdminCommandAndGetMessage(server_id, substance)
   if not _CHANNEL_PATTERN.match(channel['name']):
-    return f'You eat \"{substance}\". It tastes like you would expect.'
+    return f'You eat **{substance}**. It tastes like you would expect.'
   # TODO add processing for puzzle
