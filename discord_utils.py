@@ -179,27 +179,31 @@ def get_input(data, target):
         if option['name'] == target:
             return option['value']
     
-def format_response(content, response_type=None, tts=False):
+def format_response(content, ephemeral, response_type=None):
     if response_type == 'PONG': 
         return {
         "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
         }
 
     response = {
-            "tts": tts,
             "content": content,
             "embeds": [],
-            "allowed_mentions": []
+            "allowed_mentions": [],
+            "flags": 64 if ephemeral else None
         }
             
     return response
 
-def send_followup(application_id, interaction_token, content):
-    body = format_response(content)
+def send_followup(application_id, interaction_token, content, ephemeral=False):
+    body = format_response(content, ephemeral=ephemeral)
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}"
     requests.post(url, json=body, headers=HEADERS)
 
-def update_response(application_id, interaction_token, content):
-    body = format_response(content)
+def update_response(application_id, interaction_token, content, ephemeral=False):
+    body = format_response(content, ephemeral=ephemeral)
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
     requests.patch(url, json=body, headers=HEADERS)
+
+def delete_response(application_id, interaction_token):
+    url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
+    requests.delete(url, headers=HEADERS)
