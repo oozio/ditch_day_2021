@@ -49,9 +49,14 @@ def _form_permission():
         result = result | permission
     return result
 
+_ROLES_CACHE = {}
 def _get_roles(server_id):
+    if server_id in _ROLES_CACHE:
+        return _ROLES_CACHE[server_id]
     url = f"{BASE_URL}/guilds/{server_id}/roles"
-    return requests.get(url, headers=HEADERS).json()
+    roles = requests.get(url, headers=HEADERS).json()
+    _ROLES_CACHE[server_id] = roles
+    return roles
 
 def _get_role_ids_by_name(server_id, role_names):
     results = {key: None for key in role_names}
