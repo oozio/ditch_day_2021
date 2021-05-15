@@ -49,9 +49,51 @@ def _form_permission():
         result = result | permission
     return result
 
-def get_roles(server_id):
+def _get_roles(server_id):
     url = f"{BASE_URL}/guilds/{server_id}/roles"
     return requests.get(url, headers=HEADERS).json()
+
+def _get_role_ids_by_name(server_id, role_names):
+    results = {key: None for key in role_names}
+    for role in _get_roles(server_id):
+        if role['name'] in role_names:
+            results[ role['name'] ] = role['id']
+        if None not in results.values():
+            return results
+
+def _get_role_names_by_id(server_id, role_ids):
+    results = {key: None for key in role_ids}
+    for role in _get_roles(server_id):
+        if role['id'] in role_ids:
+            results[ role['id'] ] = role['name']
+        if None not in results.values():
+            return results
+            
+def _remove_role(user_id, role_id, server_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
+    requests.delete(url, headers=HEADERS)
+
+def _add_role(user_id, role_id, server_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
+    requests.put(url, headers=HEADERS)
+
+def get_size_role(server_id, roles):
+    results = []
+    role_names = _get_role_names_by_id(server_id, roles)
+    for name in role_names.values():
+        if "Size" in name:
+            results.append(name)
+    if len(results) != 1:
+        print(f"? {results}")
+    return results[0]
+    
+def get_user_role_names(server_id, role_ids):
+    return _get_role_names_by_id(server_id, role_ids)
+
+def change_role(server_id, user_id, old_role_name, new_role_name):
+    role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
+    _remove_role(user_id, role_ids_by_name[old_role_name], server_id)
+    _add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
 def get_channel_by_id(channel_id):
     """ Returns a channel object.
@@ -61,9 +103,6 @@ def get_channel_by_id(channel_id):
     """
     url = f"https://discord.com/api/v8/channels/{channel_id}"
     return requests.get(url, headers=HEADERS).json()
-
-def set_role(user_id, role_id):
-    pass
 
 def get_channel(channel_name, server_name):
     """ Returns a channel object.
@@ -90,8 +129,16 @@ def set_channel_permissions(role_id, channel_name, server_id, grant_type):
     
     url = f"{BASE_URL}/channels/{channel_id}/permissions/{role_id}"
 
-    print(requests.put(url, json=put_body, headers=HEADERS).__dict__)
+    requests.put(url, json=put_body, headers=HEADERS)
 
+def move_user_to_channel(server_id, user_id, channel_name):
+    # only works for voice channels
+    body = {
+        "channel_id": _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_id]
+    }
+
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
+    requests.patch(url, json=body, headers=HEADERS)
 
 def get_messages(channel_id, limit, specified_message):
     # gets the last <limit> messages from the specified channel, and appends any message specified by id
@@ -131,18 +178,28 @@ def get_input(data, target):
     for option in data.get('options', []):
         if option['name'] == target:
             return option['value']
-
     
-def format_response(response_type, content, tts=False):
-    response = {
+def format_response(content, response_type=None, tts=False):
+    if response_type == 'PONG': 
+        return {
         "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
         }
-    if response_type != 'PONG':
-        response["data"] = {
+
+    response = {
             "tts": tts,
             "content": content,
             "embeds": [],
             "allowed_mentions": []
-            }
+        }
+            
     return response
 
+def send_followup(application_id, interaction_token, content):
+    body = format_response(content)
+    url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}"
+    requests.post(url, json=body, headers=HEADERS)
+
+def update_response(application_id, interaction_token, content):
+    body = format_response(content)
+    url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
+    requests.patch(url, json=body, headers=HEADERS)
