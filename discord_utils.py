@@ -4,11 +4,11 @@ import requests
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 
-RESPONSE_TYPES =  { 
-                    "PONG": 1, 
-                    "ACK_NO_SOURCE": 2, 
-                    "MESSAGE_NO_SOURCE": 3, 
-                    "MESSAGE_WITH_SOURCE": 4, 
+RESPONSE_TYPES =  {
+                    "PONG": 1,
+                    "ACK_NO_SOURCE": 2,
+                    "MESSAGE_NO_SOURCE": 3,
+                    "MESSAGE_WITH_SOURCE": 4,
                     "ACK_WITH_SOURCE": 5
                   }
 
@@ -38,7 +38,7 @@ _CHANNEL_IDS_BY_NAME_AND_SERVER = {
 
 _PERMISSIONS = {
     "VIEW_AND_USE_SLASH_COMMANDS": 0x0080000400,
-    "ADD_REACTIONS": 0x0000000040, 
+    "ADD_REACTIONS": 0x0000000040,
     "USE_EXTERNAL_EMOJIS": 0x0000040000,
     "SEND_MESSAGES": 0x0000000800
 }
@@ -73,12 +73,12 @@ def _get_role_names_by_id(server_id, role_ids):
             results[ role['id'] ] = role['name']
         if None not in results.values():
             return results
-            
-def _remove_role(user_id, role_id, server_id):
+
+def remove_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
     requests.delete(url, headers=HEADERS)
 
-def _add_role(user_id, role_id, server_id):
+def add_role(user_id, role_id, server_id):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}/roles/{role_id}"
     requests.put(url, headers=HEADERS)
 
@@ -91,14 +91,27 @@ def get_size_role(server_id, roles):
     if len(results) != 1:
         print(f"? {results}")
     return results[0]
-    
+
 def get_user_role_names(server_id, role_ids):
     return _get_role_names_by_id(server_id, role_ids)
 
+def get_all_user_ids(server_id):
+    # return all user_ids in a server
+
+    # idk if this works? my bot is broken :(
+    # https://discord.com/developers/docs/resources/guild#list-guild-members
+    # url = f"{BASE_URL}/guilds/{server_id}/members"
+    # return requests.get(url, json={'limit'=1000},  headers=HEADERS).json()
+    pass
+
+def get_size_roles_for_user(server_id, user_id):
+    # return all role_ids that correspond to a Size role that a user has
+    pass
+
 def change_role(server_id, user_id, old_role_name, new_role_name):
     role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
-    _remove_role(user_id, role_ids_by_name[old_role_name], server_id)
-    _add_role(user_id, role_ids_by_name[new_role_name], server_id)
+    remove_role(user_id, role_ids_by_name[old_role_name], server_id)
+    add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
 def get_channel_by_id(channel_id):
     """ Returns a channel object.
@@ -126,12 +139,12 @@ def set_channel_permissions(role_id, channel_name, server_id, grant_type):
     """
     channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_id]
     permissions = _form_permission()
-    
+
     put_body = {
         "type": 0, # roles
         grant_type: permissions
     }
-    
+
     url = f"{BASE_URL}/channels/{channel_id}/permissions/{role_id}"
 
     requests.put(url, json=put_body, headers=HEADERS)
@@ -153,7 +166,7 @@ def get_messages(channel_id, limit, specified_message):
     messages = requests.get(url, headers=HEADERS).json()
     if specified_message:
         messages.append(requests.get(ind_url, headers=HEADERS).json())
-        
+
     return messages
 
 def _verify_signature(event):
@@ -161,7 +174,7 @@ def _verify_signature(event):
     auth_sig = event['params']['header'].get('x-signature-ed25519')
     auth_ts  = event['params']['header'].get('x-signature-timestamp')
     message = auth_ts.encode() + raw_body.encode()
-    
+
     try:
         verify_key = VerifyKey(bytes.fromhex(PUBLIC_KEY))
         verify_key.verify(message, bytes.fromhex(auth_sig))
@@ -172,7 +185,7 @@ def _ping_pong(body):
     if body.get("type") == 1:
         return True
     return False
-    
+
 def check_input(event):
     _verify_signature(event)
     body = event.get('body-json')
@@ -183,9 +196,9 @@ def get_input(data, target):
     for option in data.get('options', []):
         if option['name'] == target:
             return option['value']
-    
+
 def format_response(content, ephemeral, response_type=None):
-    if response_type == 'PONG': 
+    if response_type == 'PONG':
         return {
         "type": RESPONSE_TYPES[response_type] if response_type in RESPONSE_TYPES else RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
         }
@@ -196,7 +209,7 @@ def format_response(content, ephemeral, response_type=None):
             "allowed_mentions": [],
             "flags": 64 if ephemeral else None
         }
-            
+
     return response
 
 def send_followup(application_id, interaction_token, content, ephemeral=False):
