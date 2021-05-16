@@ -32,7 +32,7 @@ def handle_command(body):
         # old_size = discord_utils.get_size_role(server_id, role_ids)
         # new_size = "Size 11"
         # discord_utils.change_role(server_id, user_id, old_size, new_size)
-        return garden.processor.evaluateInput(channel_id, None, substance)
+        return garden.processor.evaluateInput(channel_id, user_id, substance, role_ids)
 
     # vvv TEMP (REMOVE) vvv
     if command == "channel-test":
