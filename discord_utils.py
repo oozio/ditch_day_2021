@@ -1,4 +1,5 @@
 import boto3
+import re
 import requests
 
 from nacl.signing import VerifyKey
@@ -36,6 +37,8 @@ _CHANNEL_IDS_BY_NAME_AND_SERVER = {
     ('admin-channel', SERVER_1): '842265337747210240'
 }
 
+SIZE_ROLE_NAME_PATTERN = re.compile(r'Size (?P<size>\d+)')
+
 _PERMISSIONS = {
     "VIEW_AND_USE_SLASH_COMMANDS": 0x0080000400,
     "ADD_REACTIONS": 0x0000000040,
@@ -50,7 +53,7 @@ def _form_permission():
     return result
 
 _ROLES_CACHE = {}
-def _get_roles(server_id):
+def _get_all_roles(server_id):
     if server_id in _ROLES_CACHE:
         return _ROLES_CACHE[server_id]
     url = f"{BASE_URL}/guilds/{server_id}/roles"
@@ -58,9 +61,17 @@ def _get_roles(server_id):
     _ROLES_CACHE[server_id] = roles
     return roles
 
+def get_roles_by_ids(server_id, role_ids):
+    roles = _get_all_roles(server_id)
+    return [role for role in roles if role['id'] in role_ids]
+
+def get_roles_by_names(server_id, role_names):
+    roles = _get_all_roles(server_id):
+    return [role for role in roles if role['name'] in role_names]
+
 def _get_role_ids_by_name(server_id, role_names):
     results = {key: None for key in role_names}
-    for role in _get_roles(server_id):
+    for role in _get_all_roles(server_id):
         if role['name'] in role_names:
             results[ role['name'] ] = role['id']
         if None not in results.values():
@@ -68,7 +79,7 @@ def _get_role_ids_by_name(server_id, role_names):
 
 def _get_role_names_by_id(server_id, role_ids):
     results = {key: None for key in role_ids}
-    for role in _get_roles(server_id):
+    for role in _get_all_roles(server_id):
         if role['id'] in role_ids:
             results[ role['id'] ] = role['name']
         if None not in results.values():
@@ -86,7 +97,7 @@ def get_size_role(server_id, roles):
     results = []
     role_names = _get_role_names_by_id(server_id, roles)
     for name in role_names.values():
-        if "Size" in name:
+        if SIZE_ROLE_NAME_PATTERN.match(name):
             results.append(name)
     if len(results) != 1:
         print(f"? {results}")
