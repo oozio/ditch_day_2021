@@ -24,19 +24,6 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-SERVER_1 = '829131678839603270'
-_CHANNEL_IDS_BY_NAME_AND_SERVER = {
-    ('hare-puzzle-discussion', SERVER_1): '840727031984553984',
-    ('hare-puzzle-level-1', SERVER_1): '841887525379112960',
-    ('hare-puzzle-level-2', SERVER_1): '841887647051153429',
-    ('hare-puzzle-level-3', SERVER_1): '841887669255667752',
-    ('hare-puzzle-level-4', SERVER_1): '841887706212466688',
-    ('hare-puzzle-level-5', SERVER_1): '841887729616551956',
-    ('hare-puzzle-level-6', SERVER_1): '841887759336996864',
-    ('hare-puzzle-level-7', SERVER_1): '841887780467507223',
-    ('admin-channel', SERVER_1): '842265337747210240'
-}
-
 SIZE_ROLE_NAME_PATTERN = re.compile(r'Size (?P<size>\d+)')
 
 _PERMISSIONS = {
@@ -53,8 +40,8 @@ def _form_permission():
     return result
 
 _ROLES_CACHE = {}
-def _get_all_roles(server_id):
-    if server_id in _ROLES_CACHE:
+def _get_all_roles(server_id, force_refresh=False):
+    if server_id in _ROLES_CACHE and not force_refresh:
         return _ROLES_CACHE[server_id]
     url = f"{BASE_URL}/guilds/{server_id}/roles"
     roles = requests.get(url, headers=HEADERS).json()
@@ -124,31 +111,50 @@ def change_role(server_id, user_id, old_role_name, new_role_name):
     remove_role(user_id, role_ids_by_name[old_role_name], server_id)
     add_role(user_id, role_ids_by_name[new_role_name], server_id)
 
+_LOADED_SERVERS = set()
+_ALL_CHANNELS_BY_ID = {}
+_CHANNELS_BY_NAME_AND_SERVER = {}
+def _load_channels(server_id, force_refresh=False):
+    if server_id in loaded_servers and not force_refresh:
+        return
+    url = f'{BASE_URL}/guilds/{server_id}/channels'
+    channels = requests.get(url, headers=HEADERS).json()
+    _ALL_CHANNELS_BY_ID.update({channel['id']: channel for channel in channels})
+    _CHANNELS_BY_NAME_AND_SERVER.update({
+            (channel['name'], channel['server']): channel
+            for channel in channels
+    })
+    loaded_servers.add(server_id)
+
 def get_channel_by_id(channel_id):
     """ Returns a channel object.
 
     returns channel object (dict).
     Params found at https://discord.com/developers/docs/resources/channel
     """
-    url = f"https://discord.com/api/v8/channels/{channel_id}"
-    return requests.get(url, headers=HEADERS).json()
+    if channel_id in _ALL_CHANNELS_BY_ID:
+        return _ALL_CHANNELS_BY_ID[channel_id]
 
-def get_channel(channel_name, server_name):
+    url = f"https://discord.com/api/v8/channels/{channel_id}"
+    channel = requests.get(url, headers=HEADERS).json()
+    _load_channels(channel_id['guild_id'])
+    return channel
+
+def get_channel(channel_name, server_id):
     """ Returns a channel object.
 
     returns channel object (dict).
     Params found at https://discord.com/developers/docs/resources/channel
     """
-    # TODO make this better??
-    channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_name]
-    return get_channel_by_id(channel_id)
+    _load_channels(server_id)
+    return _CHANNELS_BY_NAME_AND_SERVER[channel_name, server_id]
 
 def set_channel_permissions(role_id, channel_name, server_id, grant_type):
     """ Sets a channel's permissions for a given role.
 
     permissions found at https://discord.com/developers/docs/topics/permissions#permissions])
     """
-    channel_id = _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_id]
+    channel_id = _CHANNELS_BY_NAME_AND_SERVER[channel_name, server_id]['id']
     permissions = _form_permission()
 
     put_body = {
@@ -163,7 +169,7 @@ def set_channel_permissions(role_id, channel_name, server_id, grant_type):
 def move_user_to_channel(server_id, user_id, channel_name):
     # only works for voice channels
     body = {
-        "channel_id": _CHANNEL_IDS_BY_NAME_AND_SERVER[channel_name, server_id]
+        "channel_id": _CHANNELS_BY_NAME_AND_SERVER[channel_name, server_id]['id']
     }
 
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
