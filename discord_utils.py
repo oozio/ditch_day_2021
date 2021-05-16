@@ -53,7 +53,7 @@ def get_roles_by_ids(server_id, role_ids):
     return [role for role in roles if role['id'] in role_ids]
 
 def get_roles_by_names(server_id, role_names):
-    roles = _get_all_roles(server_id):
+    roles = _get_all_roles(server_id)
     return [role for role in roles if role['name'] in role_names]
 
 def _get_role_ids_by_name(server_id, role_names):
@@ -90,21 +90,24 @@ def get_size_role(server_id, roles):
         print(f"? {results}")
     return results[0]
 
-def get_user_role_names(server_id, role_ids):
-    return _get_role_names_by_id(server_id, role_ids)
+def get_size_roles_for_user(server_id, user_id):
+    roles = get_user_roles(server_id, user_id)
+    return [role for role in roles if SIZE_ROLE_NAME_PATTERN.match(role['name'])]
 
-def get_all_user_ids(server_id):
+def get_user_roles(server_id, user_id):
+    url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
+    user = requests.get(url,  headers=HEADERS).json()
+    print(f'user: {user}')
+    return get_roles_by_ids(server_id, user['roles'])
+
+def get_all_users(server_id):
     # return all user_ids in a server
 
     # idk if this works? my bot is broken :(
     # https://discord.com/developers/docs/resources/guild#list-guild-members
-    # url = f"{BASE_URL}/guilds/{server_id}/members"
-    # return requests.get(url, json={'limit'=1000},  headers=HEADERS).json()
-    pass
-
-def get_size_roles_for_user(server_id, user_id):
-    # return all role_ids that correspond to a Size role that a user has
-    pass
+    url = f"{BASE_URL}/guilds/{server_id}/members?limit=1000"
+    response = requests.get(url,  headers=HEADERS)
+    return response.json()
 
 def change_role(server_id, user_id, old_role_name, new_role_name):
     role_ids_by_name = _get_role_ids_by_name(server_id, [new_role_name, old_role_name])
@@ -114,17 +117,18 @@ def change_role(server_id, user_id, old_role_name, new_role_name):
 _LOADED_SERVERS = set()
 _ALL_CHANNELS_BY_ID = {}
 _CHANNELS_BY_NAME_AND_SERVER = {}
+
 def _load_channels(server_id, force_refresh=False):
-    if server_id in loaded_servers and not force_refresh:
+    if server_id in _LOADED_SERVERS and not force_refresh:
         return
     url = f'{BASE_URL}/guilds/{server_id}/channels'
     channels = requests.get(url, headers=HEADERS).json()
     _ALL_CHANNELS_BY_ID.update({channel['id']: channel for channel in channels})
     _CHANNELS_BY_NAME_AND_SERVER.update({
-            (channel['name'], channel['server']): channel
+            (channel['name'], channel['guild_id']): channel
             for channel in channels
     })
-    loaded_servers.add(server_id)
+    _LOADED_SERVERS.add(server_id)
 
 def get_channel_by_id(channel_id):
     """ Returns a channel object.
@@ -137,7 +141,7 @@ def get_channel_by_id(channel_id):
 
     url = f"https://discord.com/api/v8/channels/{channel_id}"
     channel = requests.get(url, headers=HEADERS).json()
-    _load_channels(channel_id['guild_id'])
+    _load_channels(channel['guild_id'])
     return channel
 
 def get_channel(channel_name, server_id):
