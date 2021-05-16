@@ -13,10 +13,12 @@ _CHANNEL_PATTERN = re.compile(r'garden-\d\d?')
 def _processAdminCommandAndGetMessage(server_id, command):
   msg = []
   if command == 'reset' or command == 'start':
-    all_user_ids = discord_utils.get_all_user_ids(server_id)
-    for user_id in all_user_ids:
-      for role_id in discord_utils.get_size_roles_for_user(server_id, user_id):
-        discord_utils.remove_role(user_id, role_id, server_id)
+    all_users = discord_utils.get_all_users(server_id)
+    for user in all_users:
+      user_id = user['user']['id']
+      for role in discord_utils.get_size_roles_for_user(server_id, user_id):
+        discord_utils.remove_role(user_id, role['id'], server_id)
+        print(f"Removed {role['id']} for {user_id}/{user}")
     msg.append('Removed all size roles.')
 
   if command == 'reset':
@@ -28,9 +30,10 @@ def _processAdminCommandAndGetMessage(server_id, command):
     msg.append('Hid garden-discussion channel.')
 
   if command == 'start':
-    all_user_ids = discord_utils.get_all_user_ids(server_id)
-    role_id = discord_utils.get_roles_by_names([_SIZE_50_ROLE_NAME])[0]['id']
-    for user_id in all_user_ids:
+    all_users = discord_utils.get_all_users(server_id)
+    role_id = discord_utils.get_roles_by_names(server_id, [_SIZE_50_ROLE_NAME])[0]['id']
+    for user in all_users:
+      user_id = user['user']['id']
       discord_utils.add_role(user_id, role_id, server_id)
     msg.append('Set all sizes to 50.')
 
