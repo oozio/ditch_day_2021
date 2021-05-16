@@ -1,5 +1,5 @@
 def grow(prev_size):
-  pass
+  return (100-prev_size)//3 + prev_size
 
 def shrink(prev_size):
-  pass
+  return prev_size//2 + 2
