@@ -63,9 +63,9 @@ KIWI = Food(
     ':kiwi:',
     b'\xf0\x9f\xa5\x9d'.decode(),
     'k',
-    mutation.Mutation.UNION,
+    mutation.Mutation.NONE,
     mutation.Mutation.DISAPPEAR,
-    mutation.Mutation.NONE)
+    mutation.Mutation.UNION)
 RICE = Food(
     ':rice:',
     b'\xf0\x9f\x8d\x9a'.decode(),
