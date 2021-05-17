@@ -60,9 +60,9 @@ def evaluateInput(channel_id, user_id, substance, role_ids):
     return f'You can\'t seem to find any "{substance}". There is only **{_GROW_SUBSTANCE}** and **{_SHRINK_SUBSTANCE}**.'
 
   size_roles = discord_utils.get_size_roles_for_user(server_id, user_id)
-  if len(roles) == 0:
+  if len(size_roles) == 0:
     # no size. Set size to 50 (should never occur)
-    role_id = discord_utils.get_roles_by_names([_SIZE_50_ROLE_NAME])[0]['id']
+    role_id = discord_utils.get_roles_by_names(server_id, [_SIZE_50_ROLE_NAME])[0]['id']
     discord_utils.add_role(user_id, role_id, server_id)
     return
 
@@ -77,7 +77,7 @@ def evaluateInput(channel_id, user_id, substance, role_ids):
   else:
     new_size = calculator.shrink(current_size)
 
-  new_size_role = discord_utils.get_roles_by_names([f'Size {new_size}'])[0]
+  new_size_role = discord_utils.get_roles_by_names(server_id, [f'Size {new_size}'])[0]
   for role in size_roles:
     discord_utils.remove_role(user_id, role['id'], server_id)
   discord_utils.add_role(user_id, new_size_role['id'], server_id)
