@@ -59,7 +59,7 @@ def evaluateInput(channel_id, user_id, substance, role_ids):
   if substance.lower() not in [_GROW_SUBSTANCE, _SHRINK_SUBSTANCE]:
     return f'You can\'t seem to find any "{substance}". There is only **{_GROW_SUBSTANCE}** and **{_SHRINK_SUBSTANCE}**.'
 
-  roles = discord_utils.get_roles_by_ids(role_ids)
+  size_roles = discord_utils.get_size_roles_for_user(role_ids)
   if len(roles) == 0:
     # no size. Set size to 50 (should never occur)
     role_id = discord_utils.get_roles_by_names([_SIZE_50_ROLE_NAME])[0]['id']
@@ -67,17 +67,17 @@ def evaluateInput(channel_id, user_id, substance, role_ids):
     return
 
   # Pick first size. There should only be 1 size
-  current_size_role = roles[0]
+  current_size_role = size_roles[0]
   m = discord_utils.SIZE_ROLE_NAME_PATTERN.match(current_size_role['name'])
   if not m:
     raise AssertionError('Size role does not have name in size format')
-  current_size = m.group('size')
+  current_size = int(m.group('size'))
   if substance.lower() == _GROW_SUBSTANCE:
     new_size = calculator.grow(current_size)
   else:
     new_size = calculator.shrink(current_size)
 
   new_size_role = discord_utils.get_roles_by_names([f'Size {new_size}'])[0]
-  for role in roles:
+  for role in size_roles:
     discord_utils.remove_role(user_id, role['id'], server_id)
   discord_utils.add_role(user_id, new_size_role['id'], server_id)
