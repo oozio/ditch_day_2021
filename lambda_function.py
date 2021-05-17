@@ -61,5 +61,8 @@ def lambda_handler(event, context):
         discord_utils.delete_response(application_id, interaction_token)
         discord_utils.send_followup(application_id, interaction_token, f"Error: {e}", ephemeral=True)
         raise e
-    
-    discord_utils.update_response(application_id, interaction_token, output)
+  
+    if not output:
+        discord_utils.delete_response(application_id, interaction_token)
+    else:
+        discord_utils.update_response(application_id, interaction_token, output)
