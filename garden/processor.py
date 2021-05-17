@@ -59,7 +59,7 @@ def evaluateInput(channel_id, user_id, substance, role_ids):
   if substance.lower() not in [_GROW_SUBSTANCE, _SHRINK_SUBSTANCE]:
     return f'You can\'t seem to find any "{substance}". There is only **{_GROW_SUBSTANCE}** and **{_SHRINK_SUBSTANCE}**.'
 
-  size_roles = discord_utils.get_size_roles_for_user(role_ids)
+  size_roles = discord_utils.get_size_roles_for_user(server_id, user_id)
   if len(roles) == 0:
     # no size. Set size to 50 (should never occur)
     role_id = discord_utils.get_roles_by_names([_SIZE_50_ROLE_NAME])[0]['id']
