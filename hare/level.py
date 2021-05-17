@@ -19,7 +19,7 @@ class Level(object):
   def __hash__(self):
     return hash((self.sequence, self.level_num))
 
-LEVEL_CODES = (None, 'rrara', 'rkr', 'akrkr', 'rrer', 'keakke', 'ccaerce', 'cracker')
+LEVEL_CODES = (None, 'rrara', 'rkrr', 'akrkr', 'rre', 'ekkaek', 'ccaerce', 'cracker')
 _AVAILABLE_FOODS_FOR_LEVEL = (None, 2, 3, 3, 4, 4, 5, 5)
 ALL_LEVELS = frozenset(
     Level(i, LEVEL_CODES[i], f'hare-puzzle-level-{i}')
