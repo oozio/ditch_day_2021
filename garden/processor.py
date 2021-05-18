@@ -113,7 +113,7 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
                   [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.SCAMPERING)])
   bunny_utils.hide_all_bunnies()
   for n in channel_nums:
-    channel = discord_utils.get_channel_by_name(f'garden-{n}', server_id)
+    channel = discord_utils.get_channel(f'garden-{n}', server_id)
     discord_utils.post_message_in_channel(channel['id'],
         'The mushroom has gone back into hiding. It seems to have gotten scared by the loud sound.')
 
