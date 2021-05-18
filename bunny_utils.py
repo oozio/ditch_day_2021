@@ -71,7 +71,7 @@ def show_all_bunnies():
                 )
 
 def catch_bunny(room):
-    for bunny in get_bunny(location=room):
+    for bunny in get_bunnies(location=room):
         table.update_item(
             Key={LOCATION: bunny[LOCATION]},
             UpdateExpression=f"set {STATUS}=:s",
