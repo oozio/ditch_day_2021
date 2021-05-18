@@ -24,7 +24,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
   if command == 'start':
     try:
       num_players = int(m.group('num_players'))
-    except IndexError as e:
+    except TypeError as e:
       return 'Input either "reset" or "start" followed by the number of players. e.g. "start5", "reset"'
   if command == 'reset' or command == 'start':
     all_users = discord_utils.get_all_users(server_id)
