@@ -36,14 +36,6 @@ def handle_command(body):
         substance = discord_utils.get_input(data, "substance")
         return garden.processor.evaluateConsumeInput(channel_id, user_id, substance, role_ids)
 
-    # vvv TEMP (REMOVE) vvv
-    if command == "channel-test":
-        arg = discord_utils.get_input(data, "arg")
-        if arg:
-          return str(arg.encode())
-        return channel_id
-    # ^^^ TEMP (REMOVE) ^^^
-
     return f"Didn't recognize command {command}!! run away!!"
 
 def lambda_handler(event, context):
