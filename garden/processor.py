@@ -59,7 +59,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
 
     rooms = _STARTING_BUNNIES[num_players]
     bunny_utils.populate_rooms(rooms)
-    msg.append('Placed mushrooms in rooms: {" ".join(str(r) for r in rooms)}')
+    msg.append(f'Placed mushrooms in rooms: {" ".join(str(r) for r in rooms)}')
 
   return '\n'.join(msg)
 
@@ -73,9 +73,6 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
 
   if substance.lower() not in [_GROW_SUBSTANCE, _SHRINK_SUBSTANCE]:
     return f'You can\'t seem to find any "{substance}". There is only **{_GROW_SUBSTANCE}** and **{_SHRINK_SUBSTANCE}**.'
-
-  bunny_utils.hide_all_bunnies()
-  # TODO post message in all bunny channels that bunnies have run into hiding
 
   size_roles = discord_utils.get_size_roles_for_user(server_id, user_id)
   if len(size_roles) == 0:
@@ -100,12 +97,34 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
     discord_utils.remove_role(user_id, role['id'], server_id)
   discord_utils.add_role(user_id, new_size_role['id'], server_id)
 
+  if new_size > current_size:
+    msg = f'The **{substance}** seems to make you grow from *Size {current_size}* to *Size {new_size}*.'
+  elif new_size < current_size:
+    msg = f'The **{substance}** seems to make you shrink from *Size {current_size}* to *Size {new_size}*.'
+  else:
+    return f'The **{substance}** you ate seems to have no effect.'
+  msg += '\nThe size change makes quite the ruckus.'
+
+  channel_nums = ([b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=CAUGHT)] +
+                  [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=SCAMPERING)])
+  bunny_utils.hide_all_bunnies()
+  for n in channel_nums:
+    channel = discord_utils.get_channel_by_name(f'garden-{n}', server_id)
+    discord_utils.post_message_in_channel(channel['id'],
+        'The mushroom has gone back into hiding. It seems to have gotten scared by the loud sound.')
+
+  return msg
+
 def evaluateWhistleInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
   if not _CHANNEL_PATTERN.match(channel['name']):
     return 'You whistle a nice tune. Nothing seems to happen.'
+  channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=HIDING)]
   bunny_utils.show_all_bunnies()
-  # TODO show message in all channels where bunny has appeared
+  for n in channel_nums:
+    channel = discord_utils.get_channel(f'garden-{n}', server_id)
+    discord_utils.post_message_in_channel(channel['id'],
+        'A mushroom came out of hiding. It seems to like the whistling.')
   return 'You whistle a nice tune. You hear some rustling.'
 
 def evaluateCatchInput(channel_id):
@@ -114,7 +133,7 @@ def evaluateCatchInput(channel_id):
   if not m:
     return 'There doesn\'t seem to be anything to catch here.'
   room_number_str = m.group('room_number')
-  all_scampering_bunnies = bunny_utils.get_all_scampering_bunnies()
+  all_scampering_bunnies = bunny_utils.get_bunnies(status=SCAMPERING)
   if not any(b[bunny_utils.LOCATION] == room_number_str
              for b in all_scampering_bunnies):
     return 'There doesn\'t seem to be anything to catch here.'

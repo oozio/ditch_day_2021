@@ -179,6 +179,11 @@ def move_user_to_channel(server_id, user_id, channel_name):
     url = f"{BASE_URL}/guilds/{server_id}/members/{user_id}"
     requests.patch(url, json=body, headers=HEADERS)
 
+def post_message_in_channel(channel_id, content):
+    url = f'{BASE_URL}/channels/{channel_id}/messages'
+    body = {'content': content}
+    requests.post(url, json=body, headers=HEADERS)
+
 def get_messages(channel_id, limit, specified_message):
     # gets the last <limit> messages from the specified channel, and appends any message specified by id
     # doesn't check if <specified_message> is duplicated

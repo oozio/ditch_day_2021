@@ -21,16 +21,7 @@ STATUS = 'bunny_status'
 
 # statuses: hiding, caught, scampering
 
-def get_all_bunnies():
-    return table.scan()['Items']
-
-def get_all_caught_bunnies():
-    return get_bunny(status=CAUGHT)
-
-def get_all_scampering_bunnies():
-    return get_bunny(status=SCAMPERING)
-
-def get_bunny(location=None, status=''):
+def get_bunnies(location=None, status=''):
     if location:
         response = table.get_item(Key={LOCATION: str(location)})
         print(response)
@@ -45,9 +36,11 @@ def get_bunny(location=None, status=''):
         print(response)
 
         return response['Items']
+    else:
+        return table.scan()['Items']
 
 def exterminate():
-    for bunny in get_all_bunnies():
+    for bunny in get_bunnies():
         table.delete_item(Key={LOCATION: bunny[LOCATION]})
 
 def populate_rooms(rooms):
@@ -56,7 +49,7 @@ def populate_rooms(rooms):
         table.put_item(Item=bunny)
 
 def hide_all_bunnies():
-    for bunny in get_all_bunnies():
+    for bunny in get_bunnies():
         # if bunny['bunny_status'] != 'caught':
         table.update_item(
             Key={LOCATION: bunny[LOCATION]},
@@ -67,7 +60,7 @@ def hide_all_bunnies():
             )
 
 def show_all_bunnies():
-    for bunny in get_all_bunnies():
+    for bunny in get_bunnies():
         if bunny[STATUS] != CAUGHT:
             table.update_item(
                 Key={LOCATION: bunny[LOCATION]},
