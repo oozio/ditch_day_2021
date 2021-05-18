@@ -39,6 +39,9 @@ def get_bunnies(location=None, status=''):
     else:
         return table.scan()['Items']
 
+def all_bunnies_are_caught():
+    return len(get_bunnies(status=CAUGHT)) == len(get_bunnies())
+
 def exterminate():
     for bunny in get_bunnies():
         table.delete_item(Key={LOCATION: bunny[LOCATION]})
