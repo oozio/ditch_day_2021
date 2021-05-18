@@ -22,7 +22,7 @@ class Level(object):
 LEVEL_CODES = (None, 'rrara', 'rkrr', 'akrkr', 'rre', 'ekkaek', 'ccaerce', 'cracker')
 _AVAILABLE_FOODS_FOR_LEVEL = (None, 2, 3, 3, 4, 4, 5, 5)
 ALL_LEVELS = frozenset(
-    Level(i, LEVEL_CODES[i], f'hare-puzzle-level-{i}')
+    Level(i, LEVEL_CODES[i], f'hares-request-{i}')
     for i in range(1, len(LEVEL_CODES))
 )
 GET_LEVEL = {

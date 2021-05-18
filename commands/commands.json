@@ -44,8 +44,8 @@
         ]
     },
     {
-        "name": "hare-puzzle",
-        "description": "Put in a guess for the March Hare's puzzle",
+        "name": "hares-request",
+        "description": "Put in a guess for the March Hare's request",
         "options": [
             {
                 "name": "guess",

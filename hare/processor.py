@@ -122,7 +122,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
                                                 if l.level_num == 1
                                                 else 'deny')
     discord_utils.set_channel_permissions(everyone_id,
-                                          'hare-puzzle-discussion',
+                                          'hares-request-discussion',
                                           server_id,
                                           'allow')
     return 'Hid all hare puzzle channels except level 1 and discussion.'
@@ -133,7 +133,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
                                             server_id,
                                             'deny')
     discord_utils.set_channel_permissions(everyone_id,
-                                          'hare-puzzle-discussion',
+                                          'hares-request-discussion',
                                           server_id,
                                           'deny')
     return 'Hid all hare puzzle channels.'
@@ -149,7 +149,7 @@ def evaluateInput(channel_id, guess):
   current_level = level.GET_LEVEL.get(channel_name, None)
   if not current_level:
     # not hare puzzle channel
-    return (f'Only call this from within one of the hare puzzle channels.')
+    return (f'Only call this from within one of the hares-request channels.')
   if not guess:
     # return current level info
     return (f'{_getAvailableFoodsString(current_level)}\n' +
