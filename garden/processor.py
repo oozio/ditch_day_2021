@@ -12,8 +12,7 @@ _SHRINK_SUBSTANCE = 'drink'
 _CHANNEL_PATTERN = re.compile(r'garden-(?P<room_number>\d\d?)')
 _ADMIN_COMMAND_PATTERN = re.compile(r'(?P<command>start|reset)(?P<num_players>\d+)?')
 
-# TODO modify for players
-_STARTING_BUNNIES = [[1, 2, 3, 4] for _ in range(100)]
+_STARTING_BUNNIES = (10, 16, 9, 20, 4, 6, 13, 1)
 
 def _processAdminCommandAndGetMessage(server_id, command):
   msg = []
@@ -61,7 +60,7 @@ def _processAdminCommandAndGetMessage(server_id, command):
                                           'allow')
     msg.append('Enabled garden-discussion channel')
 
-    rooms = _STARTING_BUNNIES[num_players]
+    rooms = _STARTING_BUNNIES[:num_players]
     bunny_utils.populate_rooms(rooms)
     msg.append(f'Placed mushrooms in rooms: {" ".join(str(r) for r in rooms)}')
 
