@@ -10,7 +10,7 @@ _GROW_SUBSTANCE = 'cake'
 _SHRINK_SUBSTANCE = 'drink'
 
 _CHANNEL_PATTERN = re.compile(r'garden-(?P<room_number>\d\d?)')
-_ADMIN_COMMAND_PATTERN = re.compile(r'(?P<command>start|reset)(?P<num_players>\d+)')
+_ADMIN_COMMAND_PATTERN = re.compile(r'(?P<command>start|reset)(?P<num_players>\d+)?')
 
 # TODO modify for players
 _STARTING_BUNNIES = [[1, 2, 3, 4] for _ in range(100)]
@@ -19,9 +19,13 @@ def _processAdminCommandAndGetMessage(server_id, command):
   msg = []
   m = _ADMIN_COMMAND_PATTERN.match(command)
   if not m:
-    return 'Input either "start" or "reset" followed by the number of players. e.g. "start5"'
+    return 'Input either "reset" or "start" followed by the number of players. e.g. "start5", "reset"'
   command = m.group('command')
-  num_players = int(m.group('num_players'))
+  if command == 'start':
+    try:
+      num_players = int(m.group('num_players'))
+    except IndexError as e:
+      return 'Input either "reset" or "start" followed by the number of players. e.g. "start5", "reset"'
   if command == 'reset' or command == 'start':
     all_users = discord_utils.get_all_users(server_id)
     for user in all_users:
@@ -105,8 +109,8 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
     return f'The **{substance}** you ate seems to have no effect.'
   msg += '\nThe size change makes quite the ruckus.'
 
-  channel_nums = ([b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=CAUGHT)] +
-                  [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=SCAMPERING)])
+  channel_nums = ([b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.CAUGHT)] +
+                  [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.SCAMPERING)])
   bunny_utils.hide_all_bunnies()
   for n in channel_nums:
     channel = discord_utils.get_channel_by_name(f'garden-{n}', server_id)
@@ -119,7 +123,7 @@ def evaluateWhistleInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
   if not _CHANNEL_PATTERN.match(channel['name']):
     return 'You whistle a nice tune. Nothing seems to happen.'
-  channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=HIDING)]
+  channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.HIDING)]
   bunny_utils.show_all_bunnies()
   for n in channel_nums:
     channel = discord_utils.get_channel(f'garden-{n}', server_id)
@@ -133,7 +137,7 @@ def evaluateCatchInput(channel_id):
   if not m:
     return 'There doesn\'t seem to be anything to catch here.'
   room_number_str = m.group('room_number')
-  all_scampering_bunnies = bunny_utils.get_bunnies(status=SCAMPERING)
+  all_scampering_bunnies = bunny_utils.get_bunnies(status=bunny_utils.SCAMPERING)
   if not any(b[bunny_utils.LOCATION] == room_number_str
              for b in all_scampering_bunnies):
     return 'There doesn\'t seem to be anything to catch here.'
