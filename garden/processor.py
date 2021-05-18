@@ -121,6 +121,7 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
 
 def evaluateWhistleInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
+  server_id = channel['guild_id']
   if not _CHANNEL_PATTERN.match(channel['name']):
     return 'You whistle a nice tune. Nothing seems to happen.'
   channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.HIDING)]
