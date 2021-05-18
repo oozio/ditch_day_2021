@@ -22,7 +22,7 @@ def handle_command(body):
         input = discord_utils.get_input(data, "time_string")
         return time_calculator.evaluate(input)
         
-    if command == "hare-puzzle":
+    if command == "hares-request":
         guess = discord_utils.get_input(data, "guess")
         return hare.processor.evaluateInput(channel_id, guess)
 
