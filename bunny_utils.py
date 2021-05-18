@@ -5,6 +5,13 @@ dynamodb_client = boto3.resource('dynamodb')
 
 table = dynamodb_client.Table("bunnies")
 
+CAUGHT = 'caught'
+SCAMPERING = 'scampering'
+HIDING = 'hiding'
+
+LOCATION = 'bunny_location'
+STATUS = 'bunny_status'
+
 # functions:
 #  populate_rooms(rooms (list))
 #  show_all_bunnies()
@@ -18,62 +25,64 @@ def get_all_bunnies():
     return table.scan()['Items']
 
 def get_all_caught_bunnies():
-    return get_bunny(status='caught')
-    
+    return get_bunny(status=CAUGHT)
+
+def get_all_scampering_bunnies():
+    return get_bunny(status=SCAMPERING)
+
 def get_bunny(location=None, status=''):
     if location:
-        response = table.get_item(Key={'bunny_location': str(location)})
+        response = table.get_item(Key={LOCATION: str(location)})
         print(response)
         return [response['Item']]
     elif status:
         scan_kwargs = {
-            'FilterExpression': Key('bunny_status').eq(status),
-            'ProjectionExpression': "bunny_location"
+            'FilterExpression': Key(STATUS).eq(status),
+            'ProjectionExpression': LOCATION
         }
 
         response = table.scan(**scan_kwargs)
         print(response)
 
         return response['Items']
-    
+
 def exterminate():
     for bunny in get_all_bunnies():
-        table.delete_item(Key={'bunny_location': bunny['bunny_location']})
+        table.delete_item(Key={LOCATION: bunny[LOCATION]})
 
 def populate_rooms(rooms):
     for room in rooms:
-        bunny = {'bunny_status': 'hiding', 'bunny_location': str(room)}    
+        bunny = {STATUS: HIDING, LOCATION: str(room)}
         table.put_item(Item=bunny)
-            
+
 def hide_all_bunnies():
     for bunny in get_all_bunnies():
         # if bunny['bunny_status'] != 'caught':
         table.update_item(
-            Key={'bunny_location': bunny['bunny_location']},
-            UpdateExpression="set bunny_status=:s",
+            Key={LOCATION: bunny[LOCATION]},
+            UpdateExpression=f"set {STATUS}=:s",
             ExpressionAttributeValues={
-                ':s': 'hiding'
-                }  
+                ':s': HIDING
+                }
             )
-    
+
 def show_all_bunnies():
     for bunny in get_all_bunnies():
-        if bunny['bunny_status'] != 'caught':
+        if bunny[STATUS] != CAUGHT:
             table.update_item(
-                Key={'bunny_location': bunny['bunny_location']},
-                UpdateExpression="set bunny_status=:s",
+                Key={LOCATION: bunny[LOCATION]},
+                UpdateExpression=f"set {STATUS}=:s",
                 ExpressionAttributeValues={
-                    ':s': 'scampering'
-                    }  
+                    ':s': SCAMPERING
+                    }
                 )
-            
+
 def catch_bunny(room):
     for bunny in get_bunny(location=room):
         table.update_item(
-            Key={'bunny_location': bunny['bunny_location']},
-            UpdateExpression="set bunny_status=:s",
+            Key={LOCATION: bunny[LOCATION]},
+            UpdateExpression=f"set {STATUS}=:s",
             ExpressionAttributeValues={
-                ':s': 'caught'
-                }  
+                ':s': CAUGHT
+                }
             )
-            

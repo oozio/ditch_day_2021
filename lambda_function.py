@@ -7,7 +7,6 @@ import time_calculator
 import hare.processor
 import garden.processor
 
-
 def handle_command(body):
     # get interaction metadata
     channel_id = body["channel_id"]
@@ -27,12 +26,15 @@ def handle_command(body):
         guess = discord_utils.get_input(data, "guess")
         return hare.processor.evaluateInput(channel_id, guess)
 
+    if command == "whistle":
+        return garden.processor.evaluateWhistleInput(channel_id)
+
+    if command == "catch":
+        return garden.processor.evaluateCatchInput(channel_id)
+
     if command == "consume":
         substance = discord_utils.get_input(data, "substance")
-        # old_size = discord_utils.get_size_role(server_id, role_ids)
-        # new_size = "Size 11"
-        # discord_utils.change_role(server_id, user_id, old_size, new_size)
-        return garden.processor.evaluateInput(channel_id, user_id, substance, role_ids)
+        return garden.processor.evaluateConsumeInput(channel_id, user_id, substance, role_ids)
 
     # vvv TEMP (REMOVE) vvv
     if command == "channel-test":
