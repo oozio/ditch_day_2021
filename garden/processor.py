@@ -118,5 +118,5 @@ def evaluateCatchInput(channel_id):
   if not any(b[bunny_utils.LOCATION] == room_number_str
              for b in all_scampering_bunnies):
     return 'There doesn\'t seem to be anything to catch here.'
-  bunny_utils.catch_bunny(room_number)
+  bunny_utils.catch_bunny(room_number_str)
   return 'You caught a mushroom!'
