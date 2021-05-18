@@ -251,3 +251,19 @@ def update_response(application_id, interaction_token, content, ephemeral=False)
 def delete_response(application_id, interaction_token):
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
     requests.delete(url, headers=HEADERS)
+    
+def send_message(channel_id, content, embed, user_id):
+    response = {
+        "content": f"<@{user_id}>: {content}:",
+        "embed": {
+            "title": f"{embed['title']}",
+            "description": f"{embed['description']}"
+         },
+        "allowed_mentions": {
+            "users": [user_id]        
+            }
+        }
+        
+    url = f"{BASE_URL}/channels/{channel_id}/messages"
+    requests.post(url, json=response, headers=HEADERS)
+
