@@ -57,11 +57,11 @@
     },
     {
         "name": "whistle",
-        "description": "Whistle a nice tune",
+        "description": "Whistle a nice tune"
     },
     {
         "name": "catch",
-        "description": "Catch any small creatures scampering around.",
+        "description": "Catch any small creatures scampering around."
     },
     {
         "name": "consume",
