@@ -75,6 +75,8 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
   if not _CHANNEL_PATTERN.match(channel['name']):
     return critique.getCritiqueOf(substance)
 
+  if bunny_utils.all_bunnies_are_caught():
+    return 'There doesn\'t seem to be anything here to consume. All the {_GROW_SUBSTANCE} and {_SHRINK_SUBSTANCE} have been consumed.'
   if substance.lower() not in [_GROW_SUBSTANCE, _SHRINK_SUBSTANCE]:
     return f'You can\'t seem to find any "{substance}". There is only **{_GROW_SUBSTANCE}** and **{_SHRINK_SUBSTANCE}**.'
 
@@ -122,7 +124,7 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
 def evaluateWhistleInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
   server_id = channel['guild_id']
-  if not _CHANNEL_PATTERN.match(channel['name']):
+  if not _CHANNEL_PATTERN.match(channel['name']) or bunny_utils.all_bunnies_are_caught():
     return 'You whistle a nice tune. Nothing seems to happen.'
   channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.HIDING)]
   bunny_utils.show_all_bunnies()
@@ -134,6 +136,7 @@ def evaluateWhistleInput(channel_id):
 
 def evaluateCatchInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
+  server_id = channel['guild_id']
   m = _CHANNEL_PATTERN.match(channel['name'])
   if not m:
     return 'There doesn\'t seem to be anything to catch here.'
@@ -143,4 +146,9 @@ def evaluateCatchInput(channel_id):
              for b in all_scampering_bunnies):
     return 'There doesn\'t seem to be anything to catch here.'
   bunny_utils.catch_bunny(room_number_str)
+  
+  if bunny_utils.all_bunnies_are_caught():
+    for n in range(1, 21):
+      channel = discord_utils.get_channel(f'garden-{n}', server_id)
+      discord_utils.post_message_to_channel(channel['id'], 'All the mushrooms have been caught!')
   return 'You caught a mushroom!'
