@@ -150,5 +150,5 @@ def evaluateCatchInput(channel_id):
   if bunny_utils.all_bunnies_are_caught():
     for n in range(1, 21):
       channel = discord_utils.get_channel(f'garden-{n}', server_id)
-      discord_utils.post_message_to_channel(channel['id'], 'All the mushrooms have been caught!')
+      discord_utils.post_message_in_channel(channel['id'], 'All the mushrooms have been caught!')
   return 'You caught a mushroom!'
