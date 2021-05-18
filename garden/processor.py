@@ -76,7 +76,7 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
     return critique.getCritiqueOf(substance)
 
   if bunny_utils.all_bunnies_are_caught():
-    return 'There doesn\'t seem to be anything here to consume. All the {_GROW_SUBSTANCE} and {_SHRINK_SUBSTANCE} have been consumed.'
+    return f'There doesn\'t seem to be anything here to consume. All the {_GROW_SUBSTANCE} and {_SHRINK_SUBSTANCE} have been consumed.'
   if substance.lower() not in [_GROW_SUBSTANCE, _SHRINK_SUBSTANCE]:
     return f'You can\'t seem to find any "{substance}". There is only **{_GROW_SUBSTANCE}** and **{_SHRINK_SUBSTANCE}**.'
 
