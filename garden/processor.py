@@ -158,7 +158,7 @@ def evaluateWhistleInput(channel_id):
 
 def calculateNearestMushroom(room_number, mushroom_channels):
   curr = int(room_number)
-  return min((abs(int(n) - curr), int(n)) for n in mushroom_channels))[1]
+  return min((abs(int(n) - curr), int(n)) for n in mushroom_channels)[1]
 
 def evaluateCatchInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
