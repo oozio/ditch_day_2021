@@ -1,5 +1,7 @@
 import re
 
+import discord_utils
+
 class Time(object):
   _TIME_PATTERN_STANDARD = re.compile(r'(?P<hour>\d?\d):(?P<minute>\d\d)')
   _TIME_PATTERN_NOCOLON = re.compile(r'(?P<hour>\d?\d)(?P<minute>\d\d)')
@@ -79,7 +81,12 @@ class Time(object):
 _TIME_EXPRESSION_PATTERN = re.compile(r'(?P<time>[^+-]*)(?P<operation>[+-])(?P<remaining>.*)')
 _NEGATIVE_TIME_EXPRESSION_PATTERN = re.compile(r'\s*-(?P<remaining>.*)')
 
-def evaluate(expression):
+def _processAdminCommandAndGetMessage(message, server_id):
+  channel = discord_utils.get_channel('subtitles', server_id)
+  discord_utils.post_message_in_channel(channel['id'], message)
+  return 'Posted message in subtitles.'
+
+def evaluate(expression, server_id):
   original_expression = expression
   total = Time.parse(0)
   evaluated_expression = []
