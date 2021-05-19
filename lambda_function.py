@@ -20,7 +20,7 @@ def handle_command(body):
     # add commands here; use discord_utils.get_input(data, <option name>) to access command input
     if command == "calculate-time":
         input = discord_utils.get_input(data, "time_string")
-        return time_calculator.evaluate(input)
+        return time_calculator.evaluate(input, server_id)
         
     if command == "hares-request":
         guess = discord_utils.get_input(data, "guess")
