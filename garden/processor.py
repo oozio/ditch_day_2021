@@ -13,7 +13,7 @@ _CHANNEL_PATTERN = re.compile(r'garden-(?P<room_number>\d\d?)')
 _ADMIN_COMMAND_PATTERN = re.compile(r'(?P<command>start|reset)(?P<num_players>\d+)?')
 
 _NUM_ROOMS = 99
-_STARTING_BUNNIES = (50, 77, 42, 97, 17, 27, 62, 4)
+_STARTING_BUNNIES = (50, 66, 41, 98, 18, 27, 73, 4)
 
 def _processAdminCommandAndGetMessage(server_id, command):
   msg = []
