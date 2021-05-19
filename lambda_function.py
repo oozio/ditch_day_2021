@@ -44,8 +44,10 @@ def lambda_handler(event, context):
         return pong
     
     body = event["body-json"]
+    channel_id = body["channel_id"]
     application_id = body["application_id"]
     interaction_token = body["token"]
+    command = body['data']['name']
     
     output = "? something broke"
     # get interaction metadata
@@ -60,3 +62,4 @@ def lambda_handler(event, context):
         discord_utils.delete_response(application_id, interaction_token)
     else:
         discord_utils.update_response(application_id, interaction_token, output)
+        discord_utils.send_response(channel_id, None, {'title': f'/{command}', 'description': output})
