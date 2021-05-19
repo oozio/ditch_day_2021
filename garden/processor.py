@@ -109,29 +109,54 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
   else:
     return f'The **{substance}** you ate seems to have no effect.'
   msg += '\nThe size change makes quite the ruckus.'
-
-  channel_nums = ([b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.CAUGHT)] +
-                  [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.SCAMPERING)])
+  
+  caught_channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.CAUGHT)]
+  scampering_channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.SCAMPERING)]
   bunny_utils.hide_all_bunnies()
-  for n in channel_nums:
+  
+  for n in scampering_channel_nums:
     channel = discord_utils.get_channel(f'garden-{n}', server_id)
     discord_utils.post_message_in_channel(channel['id'],
         'The mushroom has gone back into hiding. It seems to have gotten scared by the loud sound.')
+    
+  for n in caught_channel_nums:
+    channel = discord_utils.get_channel(f'garden-{n}', server_id)
+    discord_utils.post_message_in_channel(channel['id'],
+        'The mushroom wriggles its way out of your arms and dashes back into hiding. It seems to have gotten scared by the loud sound.')
 
   return msg
 
 def evaluateWhistleInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
   server_id = channel['guild_id']
-  if not _CHANNEL_PATTERN.match(channel['name']) or bunny_utils.all_bunnies_are_caught():
-    return 'You whistle a nice tune. Nothing seems to happen.'
+  whistle_message_stem = 'You whistle a nice tune.'
+  m = _CHANNEL_PATTERN.match(channel['name'])
+  if not m or bunny_utils.all_bunnies_are_caught():
+    return whistle_message_stem + ' Nothing seems to happen.'
+  
+  # Print mushroom messages to all mushroom channels
   channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.HIDING)]
-  bunny_utils.show_all_bunnies()
+  mushroom_message = 'A mushroom came out of hiding. It seems to like the whistling.'
+  if len(channel_nums) == 0:
+    channel_nums = ([b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.CAUGHT)] +
+                    [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.SCAMPERING)])
+    mushroom_message = 'The mushroom perks up. It seems to like the whistling.'
+  else:
+    bunny_utils.show_all_bunnies()
+  
   for n in channel_nums:
     channel = discord_utils.get_channel(f'garden-{n}', server_id)
-    discord_utils.post_message_in_channel(channel['id'],
-        'A mushroom came out of hiding. It seems to like the whistling.')
-  return 'You whistle a nice tune. You hear some rustling.'
+    discord_utils.post_message_in_channel(channel['id'], mushroom_message)
+    
+  # Print whistle response message to current channel
+  current_garden = m.group('room_number')  
+  if current_garden in channel_nums:
+    return whistle_message_stem
+  return (whistle_message_stem + ' You hear some rustling over in garden ' +
+         str(calculateNearestMushroom(current_garden, channel_nums)) + '.')
+
+def calculateNearestMushroom(channel_number, mushroom_channels):
+  pass
 
 def evaluateCatchInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
