@@ -86,7 +86,11 @@ def _processAdminCommandAndGetMessage(message, server_id):
   discord_utils.post_message_in_channel(channel['id'], message)
   return 'Posted message in subtitles.'
 
-def evaluate(expression, server_id):
+def evaluate(expression, channel_id):
+  channel = discord_utils.get_channel_by_id(channel_id)
+  server_id = channel['guild_id']
+  if channel['name'] == 'admin-channel':
+    return _processAdminCommandAndGetMessage(expression, server_id)
   original_expression = expression
   total = Time.parse(0)
   evaluated_expression = []
