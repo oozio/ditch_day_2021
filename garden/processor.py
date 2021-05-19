@@ -152,11 +152,12 @@ def evaluateWhistleInput(channel_id):
   current_garden = m.group('room_number')  
   if current_garden in channel_nums:
     return whistle_message_stem
-  return (whistle_message_stem + ' You hear some rustling over in garden ' +
-         str(calculateNearestMushroom(current_garden, channel_nums)) + '.')
+  display = calculateNearestMushroom(current_garden, channel_nums)
+  return whistle_message_stem + f' You hear some rustling over in garden-{display}.'
 
-def calculateNearestMushroom(channel_number, mushroom_channels):
-  pass
+def calculateNearestMushroom(room_number, mushroom_channels):
+  curr = int(room_number)
+  return min((abs(int(n) - curr), int(n)) for n in mushroom_channels))[1]
 
 def evaluateCatchInput(channel_id):
   channel = discord_utils.get_channel_by_id(channel_id)
