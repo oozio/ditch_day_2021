@@ -12,7 +12,8 @@ _SHRINK_SUBSTANCE = 'drink'
 _CHANNEL_PATTERN = re.compile(r'garden-(?P<room_number>\d\d?)')
 _ADMIN_COMMAND_PATTERN = re.compile(r'(?P<command>start|reset)(?P<num_players>\d+)?')
 
-_STARTING_BUNNIES = (10, 16, 9, 20, 4, 6, 13, 1)
+_NUM_ROOMS = 100
+_STARTING_BUNNIES = (50, 77, 42, 97, 17, 27, 62, 4)
 
 def _processAdminCommandAndGetMessage(server_id, command):
   msg = []
@@ -173,7 +174,7 @@ def evaluateCatchInput(channel_id):
   bunny_utils.catch_bunny(room_number_str)
   
   if bunny_utils.all_bunnies_are_caught():
-    for n in range(1, 21):
+    for n in range(1, _NUM_ROOMS+1):
       channel = discord_utils.get_channel(f'garden-{n}', server_id)
       discord_utils.post_message_in_channel(channel['id'], 'All the mushrooms have been caught!')
   return 'You caught a mushroom!'
