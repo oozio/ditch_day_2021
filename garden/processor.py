@@ -12,7 +12,6 @@ _SHRINK_SUBSTANCE = 'drink'
 _CHANNEL_PATTERN = re.compile(r'garden-(?P<room_number>\d\d?)')
 _ADMIN_COMMAND_PATTERN = re.compile(r'(?P<command>start|reset)(?P<num_players>\d+)?')
 
-_NUM_ROOMS = 99
 _STARTING_BUNNIES = (50, 66, 41, 98, 18, 27, 73, 4)
 
 def _processAdminCommandAndGetMessage(server_id, command):
@@ -108,7 +107,7 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
   elif new_size < current_size:
     msg = f'The **{substance}** seems to make you shrink from *Size {current_size}* to *Size {new_size}*.'
   else:
-    return f'The **{substance}** you ate seems to have no effect.'
+    return f'The **{substance}** you consumed seems to have no effect.'
   msg += '\nThe size change makes quite the ruckus.'
   
   caught_channel_nums = [b[bunny_utils.LOCATION] for b in bunny_utils.get_bunnies(status=bunny_utils.CAUGHT)]
@@ -118,7 +117,7 @@ def evaluateConsumeInput(channel_id, user_id, substance, role_ids):
   for n in scampering_channel_nums:
     channel = discord_utils.get_channel(f'garden-{n}', server_id)
     discord_utils.post_message_in_channel(channel['id'],
-        'The mushroom has gone back into hiding. It seems to have gotten scared by the loud sound.')
+        'The mushroom has gone back into hiding. It seems to have gotten scared by a loud sound.')
     
   for n in caught_channel_nums:
     channel = discord_utils.get_channel(f'garden-{n}', server_id)
@@ -174,7 +173,8 @@ def evaluateCatchInput(channel_id):
   bunny_utils.catch_bunny(room_number_str)
   
   if bunny_utils.all_bunnies_are_caught():
-    for n in range(1, _NUM_ROOMS+1):
+    bunny_rooms = bunny_utils.get_bunnies()
+    for n in bunny_rooms:
       channel = discord_utils.get_channel(f'garden-{n}', server_id)
       discord_utils.post_message_in_channel(channel['id'], 'All the mushrooms have been caught!')
   return 'You caught a mushroom!'
