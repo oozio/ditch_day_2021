@@ -57,12 +57,12 @@ def lambda_handler(event, context):
     except Exception as e:
         discord_utils.delete_response(application_id, interaction_token)
         discord_utils.send_followup(application_id, interaction_token, f"Error: {e}", ephemeral=True)
-        discord_utils.send_response(channel_id, None, {'title': f'/{command}', 'description': f"Error: {e}"}, ephemeral=True)
+#         discord_utils.send_response(channel_id, None, {'title': f'/{command}', 'description': f"Error: {e}"}, ephemeral=True)
         raise e
   
     if not output:
         discord_utils.delete_response(application_id, interaction_token)
     else:
         discord_utils.update_response(application_id, interaction_token, output)
-        # discord_utils.send_followup(application_id, interaction_token, output)
-        discord_utils.send_response(channel_id, f"<@{user_id}>", {'title': f'/{command}', 'description': output})
+#         discord_utils.send_followup(application_id, interaction_token, output)
+#         discord_utils.send_response(channel_id, f"<@{user_id}>", {'title': f'/{command}', 'description': output})
