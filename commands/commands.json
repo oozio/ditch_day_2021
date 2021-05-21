@@ -42,5 +42,17 @@
                 "required": 1
             }
         ]
+    },
+    {
+        "name": "candyland",
+        "description": "Play a deadly game of random number generator",
+        "options": [
+             {
+                "name": "action",
+                "description": "'roll' to move to the next turn",
+                "type": 3,
+                "required": 1
+            }
+        ]
     }
 ]
