@@ -6,6 +6,7 @@ import discord_utils
 import time_calculator
 import hare.processor
 import garden.processor
+import candyland.processor
 
 def handle_command(body):
     # get interaction metadata
@@ -36,6 +37,10 @@ def handle_command(body):
         substance = discord_utils.get_input(data, "substance")
         return garden.processor.evaluateConsumeInput(channel_id, user_id, substance, role_ids)
 
+    if command == "candyland":
+        action = discord_utils.get_input(data, "action")
+        return candyland.processor.evaluateInput(channel_id, user_id, action)
+
     return f"Didn't recognize command {command}!! run away!!"
 
 def lambda_handler(event, context):
@@ -50,7 +55,7 @@ def lambda_handler(event, context):
     user_id = body['member']['user']['id']
     command = body['data']['name']
     
-    output = "? something broke"
+    output = None
     # get interaction metadata
     try:
         output = handle_command(body)
