@@ -252,18 +252,35 @@ def delete_response(application_id, interaction_token):
     url = f"{BASE_URL}/webhooks/{application_id}/{interaction_token}/messages/@original"
     requests.delete(url, headers=HEADERS)
     
-def send_response(channel_id, content, embed):
+def send_response(channel_id, content, embed=None):
     response = {
         "content": content,
-        "embed": {
-            "title": f"{embed['title']}",
-            "description": f"{embed['description']}"
-         },
         "allowed_mentions": {
             # "users": [user_id]        
             }
         }
         
+    if embed:
+        response['embed'] = {
+            "title": f"{embed.get('title')}",
+            "description": f"{embed.get('description')}"
+         }
+         
     url = f"{BASE_URL}/channels/{channel_id}/messages"
-    requests.post(url, json=response, headers=HEADERS)
+    response = requests.post(url, json=response, headers=HEADERS)
+    
+    return response
+
+def edit_message(channel_id, message_id, content, embed={}):
+    response = {
+        "content": content
+    }
+    if embed:
+        response['embed'] = {
+            "title": f"{embed.get('title')}",
+            "description": f"{embed.get('description')}"
+         }
+    url = f"{BASE_URL}/channels/{channel_id}/messages/{message_id}"
+    response = requests.patch(url, json=response, headers=HEADERS)
+
 
