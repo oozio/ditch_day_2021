@@ -1,0 +1,86 @@
+{
+    "A1": {
+        "emoji": "<:attack1:843940172953550948>",
+        "damage": 3,
+        "hp": 1,
+        "friendly": true,
+        "moves": [
+            [
+                1,
+                0
+            ]
+        ]
+    },
+    "A2": {
+        "emoji": "<:attack1:843940172953550948>",
+        "damage": 5,
+        "hp": 1,
+        "friendly": true,
+        "moves": [
+            [
+                1,
+                0
+            ]
+        ]
+    },
+    "A3": {
+        "emoji": "<:attack2:844345893636407326>",
+        "damage": 8,
+        "hp": 1,
+        "friendly": true,
+        "moves": [
+            [
+                1,
+                0
+            ]
+        ]
+    },
+    "A101": {
+        "emoji": "<:hit:843731860533805066>",
+        "damage": 3,
+        "hp": 0,
+        "friendly": false,
+        "moves": [
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "A102": {
+        "emoji": "<:hit:843731860533805066>",
+        "damage": 5,
+        "hp": 0,
+        "friendly": false,
+        "moves": [
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "A103": {
+        "emoji": "<:attack3:844363965345955840>",
+        "damage": 9,
+        "hp": 1,
+        "friendly": false,
+        "moves": [
+            [
+                -1,
+                0
+            ]
+        ]
+    },
+    "A104": {
+        "emoji": "<:attack4:844369807034023966>",
+        "damage": 25,
+        "hp": 1,
+        "friendly": false,
+        "moves": [
+            [
+                -1,
+                0
+            ]
+        ]
+    }
+}

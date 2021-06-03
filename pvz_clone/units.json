@@ -1,0 +1,293 @@
+{
+    "1": {
+        "name": "Sentry",
+        "emoji": "<:sentry:843759038600708166>",
+        "hp": 3,
+        "price": 2,
+        "friendly": true,
+        "attacks": [
+            [
+                [
+                    1,
+                    0,
+                    "A1"
+                ]
+            ],
+            [],
+            []
+        ],
+        "moves": [
+            [
+                0,
+                0
+            ]
+        ],
+        "description": "Basic shooter. Cheap."
+    },
+    "2": {
+        "name": "Turret",
+        "emoji": "<:turret:843938794344415262>",
+        "hp": 10,
+        "price": 8,
+        "friendly": true,
+        "attacks": [
+            [
+                [
+                    1,
+                    0,
+                    "A2"
+                ]
+            ],
+            []
+        ],
+        "moves": [
+            [
+                0,
+                0
+            ]
+        ],
+        "description": "A faster and stronger Sentry."
+    },
+    "3": {
+        "name": "Gunner",
+        "emoji": "<:gunner:844343792051814450>",
+        "hp": 25,
+        "price": 25,
+        "friendly": true,
+        "attacks": [
+            [
+                [
+                    1,
+                    -1,
+                    "A3"
+                ],
+                [
+                    1,
+                    1,
+                    "A3"
+                ]
+            ],
+            [
+                [
+                    1,
+                    0,
+                    "A3"
+                ]
+            ]
+        ],
+        "moves": [
+            [
+                0,
+                0
+            ]
+        ],
+        "description": "Triple shot!"
+    },
+    "4": {
+        "name": "Kino",
+        "emoji": "<:kino:843714709567045652>",
+        "hp": 50,
+        "price": 5,
+        "friendly": true,
+        "moves": [
+            [
+                0,
+                0
+            ]
+        ],
+        "description": "Literally just sits there."
+    },
+    "101": {
+        "name": "Mutae",
+        "emoji": "<:mutae:843990686658461708>",
+        "hp": 5,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    0,
+                    "A101"
+                ]
+            ]
+        ],
+        "moves": [
+            [
+                -1,
+                0
+            ]
+        ]
+    },
+    "102": {
+        "name": "Big Mutae",
+        "emoji": "<:mutae2:844030549026668574>",
+        "hp": 15,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    0,
+                    "A102"
+                ]
+            ]
+        ],
+        "moves": [
+            [
+                -1,
+                0
+            ]
+        ]
+    },
+    "103": {
+        "name": "Spiderbot",
+        "emoji": "<:spider:844346695491387402>",
+        "hp": 10,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    0,
+                    "A101"
+                ],
+                [
+                    -2,
+                    0,
+                    "A101"
+                ]
+            ]
+        ],
+        "moves": [
+            [
+                -2,
+                0
+            ]
+        ]
+    },
+    "104": {
+        "name": "Robo",
+        "emoji": "<:robo:844362619782692934>",
+        "hp": 20,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    0,
+                    "A103"
+                ]
+            ],
+            [],
+            []
+        ],
+        "moves": [
+            [
+                -1,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "105": {
+        "name": "Big Robo",
+        "emoji": "<:robo2:844364785109172224>",
+        "hp": 30,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    0,
+                    "A103"
+                ]
+            ],
+            []
+        ],
+        "moves": [
+            [
+                -1,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "106": {
+        "name": "iRobot",
+        "emoji": "<:robo3:844365866326163456>",
+        "hp": 50,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    -1,
+                    "A103"
+                ],
+                [
+                    -1,
+                    1,
+                    "A103"
+                ]
+            ]
+        ],
+        "moves": [
+            [
+                -1,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "107": {
+        "name": "Afterlord",
+        "emoji": "<:afterlord:844367357995909131>",
+        "hp": 100,
+        "price": 0,
+        "friendly": false,
+        "attacks": [
+            [
+                [
+                    -1,
+                    0,
+                    "A104"
+                ]
+            ],
+            [
+                [
+                    -1,
+                    1,
+                    "A104"
+                ]
+            ],
+            [
+                [
+                    -1,
+                    -1,
+                    "A104"
+                ]
+            ]
+        ],
+        "moves": [
+            [
+                -1,
+                0
+            ]
+        ]
+    }
+}
